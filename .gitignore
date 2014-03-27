@@ -29,7 +29,7 @@ local.properties
 
 .mtj.tmp/
 
-*.jar
+##*.jar
 *.war
 *.ear
 
