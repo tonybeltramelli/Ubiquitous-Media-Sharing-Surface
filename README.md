@@ -11,8 +11,16 @@ Pervasive computing : Exchanging images on a shared surface
 * Provide rich ways in which to browse through the images visualized on the surface. (E.g. ScatterView)
 * Allow transferring images between the cell phones placed on the surface by using touch gestures to drag and drop images on the visualisation of other phones.
 
-In summary, the three main components of are:
+Two main components :
 
-* Surface app that shows the phones, images and touch gestures to exchange images
-* Anrdoid app with image browser
-* Network component to exchange data between the multiple phones and the surface
+# Surface app
+* Detect and register phones.
+* Receive image from phones.
+* Send image to phones.
+* Display images.
+
+# Android app
+* Show image gallery.
+* Send image to surface.
+* Receive image from surface.
+* Handshake with surface.
