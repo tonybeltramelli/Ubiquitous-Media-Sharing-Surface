@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">Shared Surface Android App</string>
+    <string name="action_settings">Settings</string>
+    <string name="preference_user_name">Username</string>
+    <string name="preference_user_email">Email</string>
+    <string name="preference_server_address">Server address</string>
+    <string name="preference_save">Save</string>
+
+</resources>
