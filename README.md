@@ -13,13 +13,13 @@ Pervasive computing : Exchanging images on a shared surface
 
 Two main components :
 
-# Surface app
+### Surface app
 * Detect and register phones.
 * Receive image from phones.
 * Send image to phones.
 * Display images.
 
-# Android app
+### Android app
 * Show image gallery.
 * Send image to surface.
 * Receive image from surface.
