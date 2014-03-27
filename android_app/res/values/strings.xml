@@ -6,5 +6,6 @@
     <string name="preference_surface_address">Surface address</string>
     <string name="preference_sticker_id">Sticker ID</string>
     <string name="preference_save">Save</string>
+    <string name="home_text">Please place the phone on the surface.</string>
 
 </resources>
