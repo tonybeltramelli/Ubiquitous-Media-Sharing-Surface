@@ -22,8 +22,8 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
 		
 		findPreference(DataManager.PREF_KEY_SAVE).setOnPreferenceClickListener(this);
 		findPreference(DataManager.PREF_KEY_USERNAME).setOnPreferenceChangeListener(this);
-		findPreference(DataManager.PREF_KEY_EMAIL).setOnPreferenceChangeListener(this);
-		findPreference(DataManager.PREF_KEY_SERVER_ADDRESS).setOnPreferenceChangeListener(this);
+		findPreference(DataManager.PREF_KEY_SURFACE_ADDRESS).setOnPreferenceChangeListener(this);
+		findPreference(DataManager.PREF_KEY_STICKER_ID).setOnPreferenceChangeListener(this);
 	}
 	
 	@Override

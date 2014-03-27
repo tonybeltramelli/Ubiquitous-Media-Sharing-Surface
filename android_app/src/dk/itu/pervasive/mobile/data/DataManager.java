@@ -12,15 +12,15 @@ public class DataManager
 {
 	public static final String PREF_KEY_SAVE = "save";
 	public static final String PREF_KEY_USERNAME = "username";
-	public static final String PREF_KEY_EMAIL = "email";
-	public static final String PREF_KEY_SERVER_ADDRESS = "serverAddress";
+	public static final String PREF_KEY_SURFACE_ADDRESS = "surfaceAddress";
+	public static final String PREF_KEY_STICKER_ID = "stickerID";
 	
 	private static DataManager _instance = null;
 	
 	private Activity _context;
 	private String _username = "";
-	private String _email = "";
-	private String _serverAddress = "";
+	private String _surfaceAddress = "";
+	private String _stickerID = "";
 	
 	private DataManager()
 	{
@@ -39,10 +39,10 @@ public class DataManager
 	public void saveData()
 	{
 		_username = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_USERNAME, "");
-		_email = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_EMAIL, "");
-		_serverAddress = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_SERVER_ADDRESS, "");
+		_surfaceAddress = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_SURFACE_ADDRESS, "");
+		_stickerID = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_STICKER_ID, "");
 		
-		Log.wtf("save data", _username + ", " + _email + ", " + _serverAddress);	
+		Log.wtf("save data", _username + ", " + _surfaceAddress + ", " + _stickerID);	
 	}
 	
 	public String getUsername()
@@ -50,14 +50,14 @@ public class DataManager
 		return _username;
 	}
 	
-	public String getEmail()
+	public String getSurfaceAddress()
 	{
-		return _email;
+		return _surfaceAddress;
 	}
 	
-	public String getServerAddress()
+	public String getStickerID()
 	{
-		return _serverAddress;
+		return _stickerID;
 	}
 	
 	public void setContext(Activity context)
