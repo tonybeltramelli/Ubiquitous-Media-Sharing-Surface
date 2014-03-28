@@ -7,5 +7,9 @@
     <string name="preference_sticker_id">Sticker ID</string>
     <string name="preference_save">Save</string>
     <string name="home_text">Please place the phone on the surface.</string>
+    <string name="tcp_service_started">TCP service started</string>
+    <string name="tcp_service_stopped">TCP service stopped</string>
+    <string name="tcp_service_connected">TCP service connected</string>
+    <string name="tcp_service_disconnected">TCP service disconnected</string>
 
 </resources>

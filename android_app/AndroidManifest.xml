@@ -7,6 +7,9 @@
         android:minSdkVersion="15"
         android:targetSdkVersion="18" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -21,7 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="dk.itu.pervasive.mobile.preferences.CustomPreference"></activity>
+        <activity android:name="dk.itu.pervasive.mobile.preferences.CustomPreference" >
+        </activity>
+
+        <service android:name="dk.itu.pervasive.mobile.service.TCPService" >
+        </service>
     </application>
 
 </manifest>

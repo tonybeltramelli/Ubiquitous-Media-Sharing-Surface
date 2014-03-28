@@ -11,6 +11,8 @@ public class MainActivity extends APrefActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		_bindService();
 	}
 	
 	@Override
