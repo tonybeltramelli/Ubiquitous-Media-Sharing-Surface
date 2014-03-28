@@ -15,9 +15,9 @@ public class MainActivity extends APrefActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
         activateGallery();
 
+		_bindService();
 	}
 	
 	@Override
