@@ -133,7 +133,7 @@ public class ImageManager {
         }
 
         if (cancelPotentialLoading(thumbnailId, imageView)) {
-            ImageLoader task = new ImageLoader(_context, imageView);
+            CustomImageLoader task = new CustomImageLoader(_context, imageView);
             AsyncDrawable asyncDrawble = new AsyncDrawable(
                     _context.getResources(), _loadingBitmap, task);
             imageView.setImageDrawable(asyncDrawble);
@@ -146,7 +146,7 @@ public class ImageManager {
     private static boolean cancelPotentialLoading(int thumbnailId,
                                                   ImageView imageView) {
 
-        ImageLoader imageLoader = getImageLoaderFromImageView(imageView);
+        CustomImageLoader imageLoader = getImageLoaderFromImageView(imageView);
 
         if (imageLoader != null) {
             int bitmapUrl = imageLoader.getData();
@@ -161,7 +161,7 @@ public class ImageManager {
     }
 
 
-    public static ImageLoader getImageLoaderFromImageView(ImageView imageView) {
+    public static CustomImageLoader getImageLoaderFromImageView(ImageView imageView) {
         if (imageView != null) {
             Drawable drawable = imageView.getDrawable();
             if (drawable instanceof AsyncDrawable) {

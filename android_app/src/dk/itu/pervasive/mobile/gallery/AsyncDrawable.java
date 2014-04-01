@@ -12,16 +12,16 @@ import java.lang.ref.WeakReference;
 
 
 class AsyncDrawable extends BitmapDrawable {
-    private final WeakReference<ImageLoader> _imageLoaderTaskReference;
+    private final WeakReference<CustomImageLoader> _imageLoaderTaskReference;
 
     public AsyncDrawable(Resources res, Bitmap bitmap,
-                         ImageLoader bitmapWorkerTask) {
+                         CustomImageLoader bitmapWorkerTask) {
         super(res, bitmap);
         _imageLoaderTaskReference =
-                new WeakReference<ImageLoader>(bitmapWorkerTask);
+                new WeakReference<CustomImageLoader>(bitmapWorkerTask);
     }
 
-    public ImageLoader getImageLoader() {
+    public CustomImageLoader getImageLoader() {
         return _imageLoaderTaskReference.get();
     }
 }

@@ -7,6 +7,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.gallery.GalleryFragment;
+import dk.itu.pervasive.mobile.gallery2.GalleryFragment2;
+import dk.itu.pervasive.mobile.gallery2.ImageManager2;
 
 public class MainActivity extends APrefActivity
 {
@@ -15,9 +17,10 @@ public class MainActivity extends APrefActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+        ImageManager2.getInstance().init(this);
         activateGallery();
 
-		_bindService();
+//		_bindService();
 	}
 	
 	@Override
@@ -42,12 +45,12 @@ public class MainActivity extends APrefActivity
         text.setVisibility(View.GONE);
         fragmentContainer.setVisibility(View.VISIBLE);
 
-        GalleryFragment fragment = (GalleryFragment) this.getFragmentManager().findFragmentByTag(
-                GalleryFragment.FRAGMENT_TAG
+        GalleryFragment2 fragment = (GalleryFragment2) this.getFragmentManager().findFragmentByTag(
+                GalleryFragment2.FRAGMENT_TAG
         );
 
         if( fragment == null ){
-            fragment = new GalleryFragment();
+            fragment = new GalleryFragment2();
             this.getFragmentManager().beginTransaction().
                     add(R.id.fragment_container , fragment , GalleryFragment.FRAGMENT_TAG)
                     .commit();

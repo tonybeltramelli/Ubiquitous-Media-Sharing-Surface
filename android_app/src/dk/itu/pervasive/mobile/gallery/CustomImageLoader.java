@@ -12,13 +12,13 @@ import java.lang.ref.WeakReference;
 /**
  * Created by centos on 3/27/14.
  */
-public class ImageLoader extends AsyncTask<Integer, Void, Bitmap>{
+public class CustomImageLoader extends AsyncTask<Integer, Void, Bitmap>{
 
     private final WeakReference<ImageView> _imageViewReference;
     private int _data = 0;
     private Context _context;
 
-    public ImageLoader(Context c , ImageView i) {
+    public CustomImageLoader(Context c, ImageView i) {
         _imageViewReference = new WeakReference<ImageView>(i);
         _context = c;
     }
@@ -52,7 +52,7 @@ public class ImageLoader extends AsyncTask<Integer, Void, Bitmap>{
         if (_imageViewReference != null && bitmap != null) {
             final ImageView imageView = _imageViewReference.get();
 
-            ImageLoader bitmapDownloaderTask = ImageManager.getImageLoaderFromImageView(imageView);
+            CustomImageLoader bitmapDownloaderTask = ImageManager.getImageLoaderFromImageView(imageView);
             // Change bitmap only if this process is still associated with
             if (this == bitmapDownloaderTask)
                 imageView.setImageBitmap(bitmap);
