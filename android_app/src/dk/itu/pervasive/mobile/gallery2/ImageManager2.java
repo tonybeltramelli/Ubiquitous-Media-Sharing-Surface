@@ -5,10 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import dk.itu.pervasive.mobile.activity.MainActivity;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -72,7 +72,7 @@ public class ImageManager2 {
                 _imageIdsPaths = new ConcurrentHashMap<Integer, String>();
 
                 cursor.moveToFirst();
-                while (cursor.isAfterLast()){
+                while (!cursor.isAfterLast()){
                     _imageIdsPaths.put(cursor.getInt(indexIds) , cursor.getString(indexPath));
                     cursor.moveToNext();
                 }
