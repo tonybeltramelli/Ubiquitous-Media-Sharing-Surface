@@ -1,10 +1,10 @@
 package dk.itu.pervasive.mobile.socket;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.Socket;
 
 import android.os.AsyncTask;
@@ -18,41 +18,58 @@ import dk.itu.pervasive.mobile.utils.dataStructure.URLInformation;
  */
 public class SocketConnection extends AsyncTask<Void, Void, Void>
 {
+	private RequestDelegate _delegate;
 	private String _imagePath;
+	private int _index;
 	
-	public SocketConnection(String imagePath)
+	public SocketConnection(RequestDelegate delegate, String imagePath, int index)
 	{
+		_delegate = delegate;
 		_imagePath = imagePath;
+		_index = index;
 	}
 	
 	@Override
 	protected Void doInBackground(Void... arg0)
 	{
+		Log.wtf("image", "send image");
+		
 		Socket socket = null;
 		try
 		{
 			URLInformation urlInformation = UString.getUrlInformation(DataManager.getInstance().getSurfaceAddress());
 			
 			socket = new Socket(urlInformation.getIp(), urlInformation.getPort());
+			socket.setKeepAlive(false);
 			
 			Log.wtf("SocketConnection", "Connecting...");
 			
 			File imageFile = new File(_imagePath);
+	        
+	        long fileSize = imageFile.length();
+	        if (fileSize > Integer.MAX_VALUE) {
+	        	Log.wtf("SocketConnection", "File is too large.");
+	        }
+	        
+	        byte[] bytes = new byte[(int) fileSize];
+	        
+	        FileInputStream fis = new FileInputStream(imageFile);
+	        BufferedInputStream bis = new BufferedInputStream(fis);
+	        BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
+
+	        int count;
+	        while ((count = bis.read(bytes)) > 0)
+	        {
+	            out.write(bytes, 0, count);
+	        }
+
+	        out.flush();
+	        out.close();
+	        fis.close();
+	        bis.close();
+	        socket.close();
 			
-			byte[] bytesArray = new byte[(int) _imagePath.length()];
-			FileInputStream fileInput = new FileInputStream(_imagePath);
-			
-			BufferedInputStream inputStream = new BufferedInputStream(fileInput);
-			inputStream.read(bytesArray, 0, bytesArray.length);
-			OutputStream outputStream = socket.getOutputStream();
-			
-			Log.wtf("SocketConnection", "Sending...");
-						
-			outputStream.write(bytesArray, 0, bytesArray.length);
-			outputStream.flush();	
-			
-			inputStream.close();
-			outputStream.close();
+			_delegate.onRequestSuccess(_index + 1);
 		} catch (IOException e)
 		{
 			e.printStackTrace();
