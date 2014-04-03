@@ -1,8 +1,0 @@
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\surface_app\bin\x86\Debug\surface_app.exe
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\surface_app\bin\x86\Debug\surface_app.pdb
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\surface_app\obj\x86\Debug\ResolveAssemblyReference.cache
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\surface_app\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\surface_app\obj\x86\Debug\surface_app.exe
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\surface_app\obj\x86\Debug\surface_app.pdb
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\surface_app\obj\x86\Debug\surface_app_Content.g.cs
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\surface_app\obj\x86\Debug\surface_app_MarkupCompile.cache
