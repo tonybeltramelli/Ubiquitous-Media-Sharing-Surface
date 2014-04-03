@@ -25,7 +25,6 @@ public class MainActivity extends APrefActivity implements GalleryFragment2.Serv
         ImageManager2.getInstance().init(this);
         activateGallery();
 
-
 	}
 	
 	@Override
@@ -40,8 +39,6 @@ public class MainActivity extends APrefActivity implements GalleryFragment2.Serv
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
-
 
     public void activateGallery(){
         TextView text = (TextView) this.findViewById(R.id.textViewHome);
@@ -60,10 +57,6 @@ public class MainActivity extends APrefActivity implements GalleryFragment2.Serv
                     add(R.id.fragment_container , fragment , GalleryFragment.FRAGMENT_TAG)
                     .commit();
         }
-
-
-
-
     }
 
     public void deactivateGallery(){
@@ -72,8 +65,6 @@ public class MainActivity extends APrefActivity implements GalleryFragment2.Serv
 
         text.setVisibility(View.VISIBLE);
         fragmentContainer.setVisibility(View.GONE);
-
-
     }
 
     @Override

@@ -5,11 +5,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.IBinder;
 import android.widget.Toast;
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.activity.MainActivity;
-import dk.itu.pervasive.mobile.socket.SocketThread;
+import dk.itu.pervasive.mobile.data.DataManager;
+import dk.itu.pervasive.mobile.socket.SocketConnection;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -20,7 +22,7 @@ public class TCPService extends Service
 	private final IBinder _binder = new TCPServiceBinder(this);
 	
 	private NotificationManager _notificationManager;
-	private SocketThread _socketThread;
+	private SocketConnection _socketConnection;
 	
 	@Override
 	public IBinder onBind(Intent intent)
@@ -35,8 +37,10 @@ public class TCPService extends Service
 		
 		_showNotification();
 		
-		_socketThread = new SocketThread();
-		_socketThread.start();
+		Uri imageUri = Uri.parse("content://media/external/images/media/962");
+		
+		_socketConnection = new SocketConnection(DataManager.getInstance().getPathFromUri(imageUri));
+		_socketConnection.execute();
 	}
 	
 	@Override
@@ -48,8 +52,7 @@ public class TCPService extends Service
 	@Override
 	public void onDestroy()
 	{
-		_socketThread.interrupt();
-		_notificationManager.cancel(NOTIFICATION);
+		_socketConnection.cancel(true);
 		
 		Toast.makeText(this, R.string.tcp_service_stopped, Toast.LENGTH_SHORT).show();
 	}
@@ -60,8 +63,9 @@ public class TCPService extends Service
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
 		
-		notification = new Notification.Builder(this).setTicker(getText(R.string.tcp_service_started)).setWhen(System.currentTimeMillis())
-				.setSmallIcon(R.drawable.itu_black_white_logo).setContentTitle(getText(R.string.tcp_service_started))
+		notification = new Notification.Builder(this).setTicker(getText(R.string.tcp_service_started))
+				.setWhen(System.currentTimeMillis()).setSmallIcon(R.drawable.itu_black_white_logo)
+				.setContentTitle(getText(R.string.tcp_service_started))
 				.setContentText(getText(R.string.tcp_service_started)).setContentIntent(contentIntent)
 				.getNotification();
 		
