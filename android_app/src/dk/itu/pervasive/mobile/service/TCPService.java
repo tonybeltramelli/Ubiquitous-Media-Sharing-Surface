@@ -1,13 +1,13 @@
 package dk.itu.pervasive.mobile.service;
 
+import java.net.SocketException;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.activity.MainActivity;
@@ -76,6 +76,6 @@ public class TCPService extends Service implements RequestDelegate
 		
 		_socketConnection = null;
 		_socketConnection = new SocketConnection(this, ImageManager2.getInstance().getImagePaths().get(index), index);
-		_socketConnection.execute();
+		_socketConnection.execute(SocketConnection.SEND);
 	}
 }

@@ -4,8 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
+
+import org.apache.commons.io.IOUtils;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -16,8 +20,11 @@ import dk.itu.pervasive.mobile.utils.dataStructure.URLInformation;
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
  */
-public class SocketConnection extends AsyncTask<Void, Void, Void>
+public class SocketConnection extends AsyncTask<String, Void, Void>
 {
+	public static String SEND = "SEND";
+	public static String RECEIVE = "RECEIVE";
+	//
 	private RequestDelegate _delegate;
 	private String _imagePath;
 	private int _index;
@@ -30,11 +37,23 @@ public class SocketConnection extends AsyncTask<Void, Void, Void>
 	}
 	
 	@Override
-	protected Void doInBackground(Void... arg0)
+	protected Void doInBackground(String... types)
 	{
-		Log.wtf("image", "send image");
+		if (types[0] == SocketConnection.SEND)
+		{
+			_send();
+		} else if (types[0] == SocketConnection.RECEIVE)
+		{
+			_receive();
+		}
 		
+		return null;
+	}
+	
+	private Socket _createSocket()
+	{
 		Socket socket = null;
+		
 		try
 		{
 			URLInformation urlInformation = UString.getUrlInformation(DataManager.getInstance().getSurfaceAddress());
@@ -43,47 +62,78 @@ public class SocketConnection extends AsyncTask<Void, Void, Void>
 			socket.setKeepAlive(false);
 			
 			Log.wtf("SocketConnection", "Connecting...");
-			
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return socket;
+	}
+	
+	private void _send()
+	{
+		Socket socket = _createSocket();
+		
+		try
+		{
 			File imageFile = new File(_imagePath);
-	        
-	        long fileSize = imageFile.length();
-	        if (fileSize > Integer.MAX_VALUE) {
-	        	Log.wtf("SocketConnection", "File is too large.");
-	        }
-	        
-	        byte[] bytes = new byte[(int) fileSize];
-	        
-	        FileInputStream fis = new FileInputStream(imageFile);
-	        BufferedInputStream bis = new BufferedInputStream(fis);
-	        BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
-
-	        int count;
-	        while ((count = bis.read(bytes)) > 0)
-	        {
-	            out.write(bytes, 0, count);
-	        }
-
-	        out.flush();
-	        out.close();
-	        fis.close();
-	        bis.close();
-	        socket.close();
+			
+			long fileSize = imageFile.length();
+			if (fileSize > Integer.MAX_VALUE)
+			{
+				Log.wtf("SocketConnection", "File is too large.");
+			}
+			
+			byte[] bytes = new byte[(int) fileSize];
+			
+			FileInputStream fis = new FileInputStream(imageFile);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
+			
+			int count;
+			while ((count = bis.read(bytes)) > 0)
+			{
+				out.write(bytes, 0, count);
+			}
+			
+			out.flush();
+			out.close();
+			fis.close();
+			bis.close();
+			socket.close();
 			
 			_delegate.onRequestSuccess(_index + 1);
 		} catch (IOException e)
 		{
 			e.printStackTrace();
-		} finally
+		}
+	}
+	
+	private void _receive()
+	{
+		Socket socket = _createSocket();
+		
+		try
 		{
+			InputStream is = null;
 			try
 			{
-				socket.close();
-			} catch (IOException e)
+				is = socket.getInputStream();
+				System.out.println("Buffer size: " + socket.getReceiveBufferSize());
+			} catch (IOException ex)
 			{
-				e.printStackTrace();
+				System.out.println("Can't get socket input stream. ");
 			}
+					
+			byte[] bytes = IOUtils.toByteArray(is);
 			
+			DataManager.getInstance().saveImage("output_"+Math.random() * 1000+".jpg", bytes);
+			
+			is.close();
+			socket.close();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
 		}
-		return null;
 	}
 }

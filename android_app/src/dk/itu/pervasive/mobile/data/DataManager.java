@@ -1,12 +1,14 @@
 package dk.itu.pervasive.mobile.data;
 
+import java.io.FileOutputStream;
+
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
-
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -42,10 +44,11 @@ public class DataManager
 	public void saveData()
 	{
 		_username = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_USERNAME, "");
-		_surfaceAddress = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_SURFACE_ADDRESS, "");
+		_surfaceAddress = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_SURFACE_ADDRESS,
+				"");
 		_stickerID = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_STICKER_ID, "");
 		
-		Log.wtf("save data", _username + ", " + _surfaceAddress + ", " + _stickerID);	
+		Log.wtf("save data", _username + ", " + _surfaceAddress + ", " + _stickerID);
 	}
 	
 	public String getPathFromUri(Uri uri)
@@ -57,6 +60,20 @@ public class DataManager
 		cursor.moveToFirst();
 		
 		return cursor.getString(column_index);
+	}
+	
+	public void saveImage(String imageName, byte[] bytes)
+	{
+		FileOutputStream fos;
+		try
+		{
+			fos = _context.openFileOutput(imageName, Context.MODE_PRIVATE);
+			fos.write(bytes);
+			fos.close();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public String getUsername()
