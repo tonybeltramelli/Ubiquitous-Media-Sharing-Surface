@@ -17,10 +17,10 @@ public class MainActivity extends APrefActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-        ImageManager2.getInstance().init(this);
-        activateGallery();
+        //ImageManager2.getInstance().init(this);
+        //activateGallery();
 
-//		_bindService();
+		_bindService();
 	}
 	
 	@Override
@@ -35,8 +35,6 @@ public class MainActivity extends APrefActivity
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
-
 
     public void activateGallery(){
         TextView text = (TextView) this.findViewById(R.id.textViewHome);
@@ -55,10 +53,6 @@ public class MainActivity extends APrefActivity
                     add(R.id.fragment_container , fragment , GalleryFragment.FRAGMENT_TAG)
                     .commit();
         }
-
-
-
-
     }
 
     public void deactivateGallery(){
@@ -67,7 +61,5 @@ public class MainActivity extends APrefActivity
 
         text.setVisibility(View.VISIBLE);
         fragmentContainer.setVisibility(View.GONE);
-
-
     }
 }

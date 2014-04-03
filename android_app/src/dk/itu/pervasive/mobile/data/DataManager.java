@@ -1,7 +1,10 @@
 package dk.itu.pervasive.mobile.data;
 
 import android.app.Activity;
+import android.database.Cursor;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 
 
@@ -43,6 +46,17 @@ public class DataManager
 		_stickerID = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_STICKER_ID, "");
 		
 		Log.wtf("save data", _username + ", " + _surfaceAddress + ", " + _stickerID);	
+	}
+	
+	public String getPathFromUri(Uri uri)
+	{
+		String[] projection = { MediaStore.Images.Media.DATA };
+		Cursor cursor = _context.getContentResolver().query(uri, projection, null, null, null);
+		
+		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		cursor.moveToFirst();
+		
+		return cursor.getString(column_index);
 	}
 	
 	public String getUsername()
