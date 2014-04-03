@@ -1,6 +1,7 @@
 package dk.itu.pervasive.mobile.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -10,8 +11,12 @@ import dk.itu.pervasive.mobile.gallery.GalleryFragment;
 import dk.itu.pervasive.mobile.gallery2.GalleryFragment2;
 import dk.itu.pervasive.mobile.gallery2.ImageManager2;
 
-public class MainActivity extends APrefActivity
+public class MainActivity extends APrefActivity implements GalleryFragment2.ServiceCallbacks
 {
+
+    private static boolean isInitialized = false;
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -20,7 +25,7 @@ public class MainActivity extends APrefActivity
         ImageManager2.getInstance().init(this);
         activateGallery();
 
-//		_bindService();
+
 	}
 	
 	@Override
@@ -67,6 +72,19 @@ public class MainActivity extends APrefActivity
 
         text.setVisibility(View.VISIBLE);
         fragmentContainer.setVisibility(View.GONE);
+
+
+    }
+
+    @Override
+    public void onLoadingFinished() {
+
+        if( !isInitialized ){
+            isInitialized = true;
+            Log.i("TAG" , "initialized");
+            _bindService();
+        }
+
 
 
     }

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import dk.itu.pervasive.mobile.R;
+import dk.itu.pervasive.mobile.activity.MainActivity;
 
 /**
  * Created by centos on 4/1/14.
@@ -22,6 +23,10 @@ public class GalleryFragment2 extends Fragment implements LoaderManager.LoaderCa
     GridView _gridView;
 
     public static final String FRAGMENT_TAG = "gallery_fragment_2";
+
+    public interface ServiceCallbacks{
+        public void onLoadingFinished();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,6 +67,8 @@ public class GalleryFragment2 extends Fragment implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.i("GALLERY", "Cursor loader finished loading");
         ((CustomCursorAdapter2)_gridView.getAdapter()).swapCursor(data);
+        ImageManager2.getInstance().setUpImageList(data);
+        ((MainActivity)this.getActivity()).onLoadingFinished();
 
     }
 
