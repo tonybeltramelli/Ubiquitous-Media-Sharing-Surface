@@ -86,27 +86,23 @@ namespace dk.itu.spct.tcp
         private void runSender() {
             while (m_isOpen) {
                 try {
-                    for (int i = 0; i < connections.Count; i++) {
-                        TcpServerConnection l_con = connections[i];
+                    foreach (TcpServerConnection l_con in connections) {
                         if (l_con.connected()) {
                             l_con.processOutgoing();
                             l_con.processIncoming();
-                        }else{
+                        } else {
                             lock (connections) {
-                                Console.WriteLine("--Device Disconnected: " + l_con.Id);
+                                Console.WriteLine("--Device disconnected: " + l_con.Id);
                                 Gallery.Instance.removeDevice(l_con.Id);
-                                connections.RemoveAt(i);
-                                i--;
+                                connections.Remove(l_con);
                             }
                         }
                     }
-                } catch (Exception e) {
-                    Console.WriteLine(e.Message);
-                }
+                } catch (Exception){}
             }
         }
         //Send image to specific device
-        public void SendImage(int tag_id, Image img) {
+        public void SendImage(string tag_id, Image img) {
             foreach (TcpServerConnection conn in connections) {
                 if (conn.Id.Equals(tag_id)){
                     TCPCommand command = new TCPCommand();
@@ -116,7 +112,7 @@ namespace dk.itu.spct.tcp
             }
         }
         //Request for images
-        public void requestDeviceGallery(int tag_id) {
+        public void requestDeviceGallery(string tag_id) {
             foreach (TcpServerConnection conn in connections) {
                 if (conn.Id.Equals(tag_id)) {
                     TCPCommand command = new TCPCommand();
@@ -126,12 +122,10 @@ namespace dk.itu.spct.tcp
             }
         }
         //Disconnect device from server
-        public void DisconnectDevice(int tag_id) {
+        public void DisconnectDevice(string tag_id) {
             foreach (TcpServerConnection conn in connections) {
                 if (conn.Id.Equals(tag_id)) {
-                    Console.WriteLine("--Device disconnected: " + tag_id);
                     conn.forceDisconnect();
-                    Gallery.Instance.removeDevice(conn.Id);
                     return;
                 }
             }
@@ -149,7 +143,6 @@ namespace dk.itu.spct.tcp
                 m_isOpen = false;
                 foreach (TcpServerConnection conn in connections) {
                     conn.forceDisconnect();
-                    Gallery.Instance.removeDevice(conn.Id);
                 }
                 // Terminate listener thread
                 try {

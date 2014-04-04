@@ -3,8 +3,6 @@ using System.Drawing;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-
-
 namespace dk.itu.spct
 {
     //Gallery representation
@@ -45,29 +43,21 @@ namespace dk.itu.spct
                 images.Add(img);
             }
         }
-        public void RemoveImage(Image img) {
-            lock (images) {
-                images.Remove(img);
-            }
-        }
         //Remove owner from images
-        public void removeDevice(int tag_id) {
-            foreach (Image img in images) {
-                img.RemoveOwner(tag_id);
+        public void removeDevice(string tag_id){
+            lock (images) {
+                foreach (Image img in images) {
+                    if (img.RemoveOwner(tag_id) == 0) {
+                        images.Remove(img);
+                    }
+                }
             }
         }
         //Destroy gallery
         public void destroy () {
-            foreach (Image img in images) {
-                foreach(int owner in img.Owners)
-                img.RemoveOwner(owner);
-            }
-            lock(images){
-                images.Clear();
-            }
+            instance = null;
         }
     }
-
     
     //Image representation
     public class Image{
@@ -75,7 +65,7 @@ namespace dk.itu.spct
         private string m_file_name;
         private Bitmap m_bitmap;
 
-        private HashSet<int> owners;
+        private List<string> owners;
 
         //GET-SET
         public string File_Name {
@@ -88,7 +78,7 @@ namespace dk.itu.spct
                 return m_bitmap;
             }
         }
-        public HashSet<int> Owners {
+        public List<string> Owners {
             get {
                 return owners;
             }
@@ -107,46 +97,31 @@ namespace dk.itu.spct
         
         //Setup image
         private void initialize() {
-            owners = new HashSet<int>();
+            owners = new List<string>();
         }
         //Add device owner to current image
-        public void AddOwner(int tag_id) {
-            lock (owners) {
-                owners.Add(tag_id);
+        public void AddOwner(string tag_id) {
+            if (!String.IsNullOrEmpty(tag_id)) {
+                lock (owners) {
+                    owners.Add(tag_id);
+                }
             }
         }
         //Remove device owner from image
-        //public void RemoveOwner(string tag_id) {
-        //    for (int i = 0; i < owners.Count; i++) {
-        //        if (owners[i].Equals(tag_id)) {
-        //            lock (owners){
-        //                owners.RemoveAt(i);
-        //            }
-        //            if (owners.Count == 0) {
-        //                Gallery.Instance.RemoveImage(this);
-        //            }
-        //            return;
-        //        }
-        //    }
-        //}
-        public void RemoveOwner(int tag_id)
-        {
-            lock(owners){
-                owners.RemoveWhere(id => id == tag_id);
+        public int RemoveOwner(string tag_id) {
+            for (int i = 0; i < owners.Count; i++) {
+                if (owners[i].Equals(tag_id)) {
+                    lock (owners) {
+                        owners.RemoveAt(i);
+                    }
+                }
             }
-            if (owners.Count == 0)
-            {
-                Gallery.Instance.RemoveImage(this);
-            }
-            return;
+            return owners.Count;
         }
         //Get bitmap byte array
         public byte[] ByteArray() {
-            byte[] data;
             ImageConverter converter = new ImageConverter();
-            data = (byte[])converter.ConvertTo(Bitmap, typeof(byte[]));
-            Console.WriteLine(data.Length);
-            return data;
+            return (byte[])converter.ConvertTo(Bitmap, typeof(byte[]));
         }
         //Save image on hard drive
         private Bitmap genBitmap(byte[] data) {

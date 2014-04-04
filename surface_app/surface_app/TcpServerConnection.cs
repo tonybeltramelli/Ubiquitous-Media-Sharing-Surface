@@ -23,7 +23,7 @@ namespace dk.itu.spct.tcp
         private List<Message> messagesToSend;
         private TcpClient m_socket;
         private Encoding m_encoding;
-        private int m_id;
+        private string m_id;
         public Boolean waitForSuccess;
 
         public TcpServerConnection(TcpClient sock, Encoding encoding) {
@@ -34,7 +34,7 @@ namespace dk.itu.spct.tcp
         }
 
         //Get-Set
-        public int Id {
+        public string Id {
             get {
                 return m_id;
             }
@@ -53,9 +53,21 @@ namespace dk.itu.spct.tcp
         //Is client connected?
         public bool connected() {
             try {
-                //(new StreamWriter(m_socket.GetStream(), m_encoding)).WriteLine().Flush();
-                return m_socket.Connected;
-            } catch (Exception) {
+                if (m_socket != null && m_socket.Client != null && m_socket.Client.Connected) {
+                    // Detect if client disconnected
+                    if (m_socket.Client.Poll(0, SelectMode.SelectRead)) {
+                        byte[] buff = new byte[1];
+                        if (m_socket.Client.Receive(buff, SocketFlags.Peek) == 0) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch {
                 return false;
             }
         }
@@ -112,6 +124,7 @@ namespace dk.itu.spct.tcp
                             streamWriter.Flush();
 
                             if (message.data != null) {
+                                System.Threading.Thread.Sleep(1000);
                                 waitForSuccess = true;
                                 networkStream.Write(message.data, 0, message.data.Length);
                             }

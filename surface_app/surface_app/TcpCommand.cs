@@ -12,11 +12,10 @@ namespace dk.itu.spct.tcp
         //Server-Client actions
         public enum actions
         {
-            start,      // 0 - Register device
-            end,        // 1 - Unregist device
-            request,    // 2 - Request for shared images
-            send,       // 3 - Send image to device
-            success     // 4 - Notify success
+            start,      
+            request,
+            send,
+            success
         }
         //Attributes
         private Gallery gallery;
@@ -44,13 +43,6 @@ namespace dk.itu.spct.tcp
                         conn.Id = item.tag_id;
                         break;
                     
-                    //[{'action':'1'}]
-                    case actions.end:
-                        Console.WriteLine("--Device disconnected: {0}", conn.Id);
-                        conn.forceDisconnect();
-                        gallery.removeDevice(conn.Id);
-                        break;
-                    
                     //[{'action':'3','name':'image1','size':'Bytes'}]
                     case actions.send:
                         
@@ -66,14 +58,11 @@ namespace dk.itu.spct.tcp
                         gallery.AddImage(img);
 
                         sendSuccessNotification(conn, img.File_Name);
-
-                        //TODO Remove: Testing purpose
-                        //img.Bitmap.Save("../../images/copy_" + img.File_Name);
-
                         break;
 
                     //[{'action':'4'}]
                     case actions.success:
+                        Console.WriteLine("--Success received from '{0}'", conn.Id);
                         conn.waitForSuccess = false;
                         break;
                     
@@ -92,8 +81,8 @@ namespace dk.itu.spct.tcp
         }
         //Generate JSON object from text
         //[{'action':'3'},{'file_name':'image1','data':'image1'}]
-        public void sendImage(TcpServerConnection conn, int tag_id, Image img) {
-            foreach (int owner in img.Owners) {
+        public void sendImage(TcpServerConnection conn, string tag_id, Image img) {
+            foreach (String owner in img.Owners) {
                 if (owner.Equals(tag_id)) { return; }
             }
 
@@ -106,7 +95,7 @@ namespace dk.itu.spct.tcp
             
             img.AddOwner(tag_id);
 
-            Console.WriteLine("--Image sent to {0}: {1}", conn.Id, img.File_Name);
+            Console.WriteLine("--Image sent to {0}: {1} size {2}", conn.Id, img.File_Name,bytes.Length);
         }
         //Image transfered successfuly notificaiton
         public void sendSuccessNotification(TcpServerConnection conn, string message) {
