@@ -17,15 +17,23 @@ public class SocketConnection extends AsyncTask<String, Void, Void>
 {
 	public static String SEND = "SEND";
 	public static String RECEIVE = "RECEIVE";
+	public static String CREATE = "CREATE";
 	//
 	private RequestDelegate _delegate;
 	private String _imagePath;
 	private int _index;
     private String _type;
+    private Socket _socket;
 	
-	public SocketConnection(RequestDelegate delegate, String imagePath, int index)
+    public SocketConnection(RequestDelegate delegate)
+	{
+    	_delegate = delegate;
+	}
+    
+	public SocketConnection(RequestDelegate delegate, Socket socket, String imagePath, int index)
 	{
 		_delegate = delegate;
+		_socket = socket;
 		_imagePath = imagePath;
 		_index = index;
 	}
@@ -41,18 +49,32 @@ public class SocketConnection extends AsyncTask<String, Void, Void>
 		} else if (_type == SocketConnection.RECEIVE)
 		{
 			_receive();
+		} else if (_type == SocketConnection.CREATE)
+		{
+			_create();
 		}
 		
 		return null;
 	}
 
-    @Override
+    private void _create()
+	{
+    	_socket = _createSocket();
+	}
+
+	@Override
     protected void onPostExecute(Void aVoid) {
 
         if( _type == SocketConnection.SEND )
-            _delegate.onRequestSuccess(_index + 1);
-
-
+        {
+            _delegate.onRequestSendSuccess(_index + 1);
+        } else if( _type == SocketConnection.RECEIVE )
+        {
+        	_delegate.onRequestReceiveSuccess();
+        }  else if( _type == SocketConnection.CREATE )
+        {
+        	_delegate.onRequestCreateSuccess(_socket);
+        }
     }
 
     private Socket _createSocket()
@@ -77,8 +99,6 @@ public class SocketConnection extends AsyncTask<String, Void, Void>
 	
 	private void _send()
 	{
-		Socket socket = _createSocket();
-		
 		try
 		{
 			File imageFile = new File(_imagePath);
@@ -89,23 +109,27 @@ public class SocketConnection extends AsyncTask<String, Void, Void>
 				Log.wtf("SocketConnection", "File is too large.");
 			}
 			
+			Log.i("TAG", "sending image : "+fileSize);
+			
 			byte[] bytes = new byte[(int) fileSize];
 			
 			FileInputStream fis = new FileInputStream(imageFile);
 			BufferedInputStream bis = new BufferedInputStream(fis);
-			BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
+			BufferedOutputStream out = new BufferedOutputStream(_socket.getOutputStream());
+			
+			out.write(String.valueOf(fileSize).getBytes());
 			
 			int count;
 			while ((count = bis.read(bytes)) > 0)
 			{
 				out.write(bytes, 0, count);
+				Log.i("TAG", "sending data");
 			}
 			
 			out.flush();
-			out.close();
+			//out.close();
 			fis.close();
 			bis.close();
-			socket.close();
 			
 		} catch (IOException e)
 		{
