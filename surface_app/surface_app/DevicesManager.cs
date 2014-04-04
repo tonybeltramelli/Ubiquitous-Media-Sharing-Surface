@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+// using dk.itu.spct.Gallery;
+using dk.itu.spct;
 
 namespace surface_app
 {
@@ -11,6 +13,8 @@ namespace surface_app
         #region Private Memebers
         // collection of registered devices
         private Dictionary<int, PhonePin> activeMembers;
+
+        private Gallery commonGallery;
 
         #endregion
 
@@ -71,6 +75,16 @@ namespace surface_app
             // loop through the gallery and find the img with imgID
 
                 // send the instance to Daniel
+        }
+
+        public void updatedGallery()
+        {
+            // a new user's gallery has been added, so loop through the entire thing
+            foreach (Image img in commonGallery.Images)
+            {
+
+            }
+
         }
 
         #endregion
