@@ -13,7 +13,7 @@ import java.net.Socket;
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
  */
-public class SocketConnection extends AsyncTask<String, Void, Void>
+public class TOREMOVE_SocketConnection extends AsyncTask<String, Void, Void>
 {
 	public static String SEND = "SEND";
 	public static String RECEIVE = "RECEIVE";
@@ -25,12 +25,12 @@ public class SocketConnection extends AsyncTask<String, Void, Void>
     private String _type;
     private Socket _socket;
 	
-    public SocketConnection(RequestDelegate delegate)
+    public TOREMOVE_SocketConnection(RequestDelegate delegate)
 	{
     	_delegate = delegate;
 	}
     
-	public SocketConnection(RequestDelegate delegate, Socket socket, String imagePath, int index)
+	public TOREMOVE_SocketConnection(RequestDelegate delegate, Socket socket, String imagePath, int index)
 	{
 		_delegate = delegate;
 		_socket = socket;
@@ -43,13 +43,13 @@ public class SocketConnection extends AsyncTask<String, Void, Void>
 	{
         _type = types[0];
 
-		if (_type == SocketConnection.SEND)
+		if (_type == TOREMOVE_SocketConnection.SEND)
 		{
 			_send();
-		} else if (_type == SocketConnection.RECEIVE)
+		} else if (_type == TOREMOVE_SocketConnection.RECEIVE)
 		{
 			_receive();
-		} else if (_type == SocketConnection.CREATE)
+		} else if (_type == TOREMOVE_SocketConnection.CREATE)
 		{
 			_create();
 		}
@@ -64,7 +64,7 @@ public class SocketConnection extends AsyncTask<String, Void, Void>
 
 	@Override
     protected void onPostExecute(Void aVoid) {
-
+		/*
         if( _type == SocketConnection.SEND )
         {
             _delegate.onRequestSendSuccess(_index + 1);
@@ -74,7 +74,7 @@ public class SocketConnection extends AsyncTask<String, Void, Void>
         }  else if( _type == SocketConnection.CREATE )
         {
         	_delegate.onRequestCreateSuccess(_socket);
-        }
+        }*/
     }
 
     private Socket _createSocket()

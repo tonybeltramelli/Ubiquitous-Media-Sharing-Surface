@@ -8,7 +8,7 @@ import java.net.Socket;
  */
 public interface RequestDelegate
 {
-	public void onRequestSendSuccess(int index);
+	public void onRequestSendSuccess();
 	public void onRequestCreateSuccess(Socket socket);
 	public void onRequestReceiveSuccess();
 }

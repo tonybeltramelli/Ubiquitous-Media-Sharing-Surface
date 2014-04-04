@@ -1,6 +1,5 @@
 package dk.itu.pervasive.mobile.service;
 
-import java.io.IOException;
 import java.net.Socket;
 
 import android.app.Notification;
@@ -9,13 +8,12 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.activity.MainActivity;
-import dk.itu.pervasive.mobile.gallery2.ImageManager2;
 import dk.itu.pervasive.mobile.socket.RequestDelegate;
-import dk.itu.pervasive.mobile.socket.SocketConnection;
+import dk.itu.pervasive.mobile.socket.SocketCreatingTask;
+import dk.itu.pervasive.mobile.socket.SocketSendingTask;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -26,7 +24,6 @@ public class TCPService extends Service implements RequestDelegate
 	private final IBinder _binder = new TCPServiceBinder(this);
 	
 	private NotificationManager _notificationManager;
-	private SocketConnection _socketConnection;
 	private Socket _socket;
 	
 	@Override
@@ -42,10 +39,16 @@ public class TCPService extends Service implements RequestDelegate
 		
 		_showNotification();
 		
-		_socketConnection = new SocketConnection(this);
-		_socketConnection.execute(SocketConnection.CREATE);
+		_createSocket();
 	}
 	
+	private void _createSocket()
+	{
+		//will execute onRequestCreateSuccess
+		SocketCreatingTask socketTask = new SocketCreatingTask(this);
+		socketTask.execute();
+	}
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
@@ -74,24 +77,10 @@ public class TCPService extends Service implements RequestDelegate
 	}
 	
 	@Override
-	public void onRequestSendSuccess(int index)
+	public void onRequestSendSuccess()
 	{
-		if (index == ImageManager2.getInstance().getImagePaths().size())
-		{
-			try
-			{
-				Log.i("TAG", "closing socket");
-				_socket.close();
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			return;
-		}
-		
-		_socketConnection = null;
-		_socketConnection = new SocketConnection(this, _socket, ImageManager2.getInstance().getImagePaths().get(index), index);
-		_socketConnection.execute(SocketConnection.SEND);
+		//TODO
+		//_socket.close();
 	}
 	
 	@Override
@@ -99,11 +88,15 @@ public class TCPService extends Service implements RequestDelegate
 	{
 		_socket = socket;
 		
-		onRequestSendSuccess(0);
+		//will execute onRequestSendSuccess
+		SocketSendingTask socketTask = new SocketSendingTask(this, _socket);
+		socketTask.execute();
 	}
 	
 	@Override
 	public void onRequestReceiveSuccess()
-	{	
+	{
+		//TODO
+		//_socket.close();
 	}
 }

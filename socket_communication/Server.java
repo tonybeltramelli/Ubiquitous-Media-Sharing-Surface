@@ -80,12 +80,12 @@ public class Server
 			
 			ByteBuffer b = ByteBuffer.wrap(fileSizeBytes);*/
 			
-			System.out.println("file size : "+input.readLong());
+			//System.out.println("file size : "+input.readLong());
 			
 			int count;
 			while ((count = is.read(bytes)) != -1)
 			{
-				//System.out.println("read byte : " + count);
+				System.out.println("read byte : " + count);
 				
 				bos.write(bytes, 0, count);
 			}
