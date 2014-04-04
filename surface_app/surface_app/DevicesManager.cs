@@ -82,7 +82,10 @@ namespace surface_app
             // a new user's gallery has been added, so loop through the entire thing
             foreach (Image img in commonGallery.Images)
             {
-
+                foreach (int tagID in img.Owners)
+                {
+                    
+                }
             }
 
         }

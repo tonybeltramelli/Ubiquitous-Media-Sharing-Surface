@@ -23,7 +23,7 @@ namespace dk.itu.spct.tcp
         private List<Message> messagesToSend;
         private TcpClient m_socket;
         private Encoding m_encoding;
-        private string m_id;
+        private int m_id;
         public Boolean waitForSuccess;
 
         public TcpServerConnection(TcpClient sock, Encoding encoding) {
@@ -34,7 +34,7 @@ namespace dk.itu.spct.tcp
         }
 
         //Get-Set
-        public string Id {
+        public int Id {
             get {
                 return m_id;
             }

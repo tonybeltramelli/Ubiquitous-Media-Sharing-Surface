@@ -44,7 +44,7 @@ namespace ShoppingCart
         {
             if (!(element is ScatterViewItem))
             {
-                throw new InvalidOperationException(Properties.Resources.AllowDragOnlyOnScatterViewItem);
+                throw new InvalidOperationException(surface_app.Properties.Resources.AllowDragOnlyOnScatterViewItem);
             }
 
             return (bool)element.GetValue(AllowDragProperty);
@@ -59,7 +59,7 @@ namespace ShoppingCart
         {
             if (!(element is ScatterViewItem))
             {
-                throw new InvalidOperationException(Properties.Resources.AllowDragOnlyOnScatterViewItem);
+                throw new InvalidOperationException(surface_app.Properties.Resources.AllowDragOnlyOnScatterViewItem);
             }
 
             element.SetValue(AllowDragProperty, value);

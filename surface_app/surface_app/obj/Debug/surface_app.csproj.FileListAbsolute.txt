@@ -10,9 +10,11 @@ E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\App.g.cs
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app_Content.g.cs
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app_MarkupCompile.cache
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app.g.resources
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\SurfaceApplication1.Properties.Resources.resources
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\GenerateResource.read.1.tlog
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\GenerateResource.write.1.tlog
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app.exe
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app.pdb
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app.Properties.Resources.resources
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\Newtonsoft.Json.dll
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\Newtonsoft.Json.pdb
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\Newtonsoft.Json.xml
