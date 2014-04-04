@@ -55,5 +55,20 @@ namespace surface_app
 
         #endregion
 
+        #region Shape Methods
+
+        /// <summary>
+        /// Implementation of abstract DefiningGeometry property.
+        /// </summary>
+        protected override Geometry DefiningGeometry
+        {
+            get
+            {
+                return tileShape;
+            }
+        }
+
+        #endregion
+
     }
 }

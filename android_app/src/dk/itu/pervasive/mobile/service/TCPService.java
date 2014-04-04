@@ -1,6 +1,7 @@
 package dk.itu.pervasive.mobile.service;
 
-import java.net.SocketException;
+import java.io.IOException;
+import java.net.Socket;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -8,6 +9,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.activity.MainActivity;
@@ -25,6 +27,7 @@ public class TCPService extends Service implements RequestDelegate
 	
 	private NotificationManager _notificationManager;
 	private SocketConnection _socketConnection;
+	private Socket _socket;
 	
 	@Override
 	public IBinder onBind(Intent intent)
@@ -39,7 +42,8 @@ public class TCPService extends Service implements RequestDelegate
 		
 		_showNotification();
 		
-		onRequestSuccess(0);
+		_socketConnection = new SocketConnection(this);
+		_socketConnection.execute(SocketConnection.CREATE);
 	}
 	
 	@Override
@@ -68,14 +72,38 @@ public class TCPService extends Service implements RequestDelegate
 		
 		_notificationManager.notify(NOTIFICATION, notification);
 	}
-
+	
 	@Override
-	public void onRequestSuccess(int index)
+	public void onRequestSendSuccess(int index)
 	{
-		if(index == ImageManager2.getInstance().getImagePaths().size()) return;
+		if (index == ImageManager2.getInstance().getImagePaths().size())
+		{
+			try
+			{
+				Log.i("TAG", "closing socket");
+				_socket.close();
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			return;
+		}
 		
 		_socketConnection = null;
-		_socketConnection = new SocketConnection(this, ImageManager2.getInstance().getImagePaths().get(index), index);
+		_socketConnection = new SocketConnection(this, _socket, ImageManager2.getInstance().getImagePaths().get(index), index);
 		_socketConnection.execute(SocketConnection.SEND);
+	}
+	
+	@Override
+	public void onRequestCreateSuccess(Socket socket)
+	{
+		_socket = socket;
+		
+		onRequestSendSuccess(0);
+	}
+	
+	@Override
+	public void onRequestReceiveSuccess()
+	{	
 	}
 }

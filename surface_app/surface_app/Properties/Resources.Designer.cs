@@ -59,5 +59,39 @@ namespace surface_app.Properties {
                 resourceCulture = value;
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to AllowDrag property only works on ScatterViewItem.
+        /// </summary>
+        internal static string AllowDragOnlyOnScatterViewItem
+        {
+            get
+            {
+                return ResourceManager.GetString("AllowDragOnlyOnScatterViewItem", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid element type..
+        /// </summary>
+        internal static string ArgumentExceptionMessage
+        {
+            get
+            {
+                return ResourceManager.GetString("ArgumentExceptionMessage", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Vertical Scrolling Not Allowed.
+        /// </summary>
+        internal static string VerticalScrollingNotAllowed
+        {
+            get
+            {
+                return ResourceManager.GetString("VerticalScrollingNotAllowed", resourceCulture);
+            }
+        }
+
     }
 }
