@@ -1,0 +1,17 @@
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\Resources\icon.png
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\SurfaceApplication1.xml
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\surface_app.exe
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\surface_app.pdb
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\ResolveAssemblyReference.cache
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\SurfaceWindow1.baml
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\App.baml
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\SurfaceWindow1.g.cs
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\App.g.cs
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app_Content.g.cs
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app_MarkupCompile.cache
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app.g.resources
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\SurfaceApplication1.Properties.Resources.resources
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\GenerateResource.read.1.tlog
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\GenerateResource.write.1.tlog
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app.exe
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app.pdb
