@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 
-namespace SurfaceApplication1
+namespace surface_app
 {
     /// <summary>
     /// Interaction logic for App.xaml
