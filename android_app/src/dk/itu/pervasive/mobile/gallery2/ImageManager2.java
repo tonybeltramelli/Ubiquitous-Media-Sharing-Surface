@@ -1,9 +1,11 @@
 package dk.itu.pervasive.mobile.gallery2;
 
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.util.Log;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -58,27 +60,60 @@ public class ImageManager2 {
     }
 
 
-    public void insertImageToMediaStore(String path) {
+    public void insertImageToGallery(String path) {
+        String[] parts = path.split("/");
 
+        String fileName = parts[parts.length - 1];
+        String bucketName = parts[parts.length - 2];
+        //check for regex
+        String extension = fileName.split("\\.")[1];
+        String name = fileName.split("\\.")[0];
+        String description = "Image taken from microsoft surface";
+
+        insertImageToMediaStore(path, name, bucketName, extension, description);
     }
 
-    public void setUpImageList( Cursor cursor ){
+    public void setUpImageList(Cursor cursor) {
 
         int indexIds = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
         int indexPath = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 
-        if ( cursor != null ){
-            if( cursor.getCount() > 0){
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
                 _imageIdsPaths = new ConcurrentHashMap<Integer, String>();
 
                 cursor.moveToFirst();
-                while (!cursor.isAfterLast()){
-                    _imageIdsPaths.put(cursor.getInt(indexIds) , cursor.getString(indexPath));
+                while (!cursor.isAfterLast()) {
+                    _imageIdsPaths.put(cursor.getInt(indexIds), cursor.getString(indexPath));
                     cursor.moveToNext();
                 }
             }
 
         }
+    }
+
+    private void insertImageToMediaStore(String path, String fileName, String bucketName
+            , String fileType , String description ) {
+
+        ContentValues values = new ContentValues();
+
+        if( fileType.equals("jpg") || fileType.equals("JPG"))
+            fileType = "jpeg";
+
+        Log.i("GALLERY" , "path : " + path );
+        Log.i("GALLERY" , "filename : " + fileName );
+        Log.i("GALLERY" , "type : " + fileType );
+        Log.i("GALLERY" , "bucketname : " + bucketName );
+
+        values.put(MediaStore.Images.Media.TITLE, fileName);
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+        values.put(MediaStore.Images.Media.BUCKET_ID, System.currentTimeMillis());
+        values.put(MediaStore.Images.Media.BUCKET_DISPLAY_NAME, bucketName);
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/" + fileType);
+        values.put(MediaStore.Images.Media.DESCRIPTION, description);
+        values.put(MediaStore.MediaColumns.DATA, path);
+
+        _context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
 
 
