@@ -1,16 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Xml;
 using Microsoft.Surface;
 using Microsoft.Surface.Presentation;
 using Microsoft.Surface.Presentation.Controls;
@@ -19,30 +14,38 @@ using Microsoft.Surface.Presentation.Input;
 namespace surface_app
 {
     /// <summary>
-    /// Interaction logic for SurfaceWindow1.xaml
+    /// Demonstrates infrastructure capabilities based on several Surface controls.
     /// </summary>
-    public partial class SurfaceWindow1 : SurfaceWindow
+    public partial class MainWindow : SurfaceWindow
     {
+        // Flag to indicate whether tags are supported on the current hardware.
+        private static readonly bool areTagsSupported = InteractiveSurface.PrimarySurfaceDevice.IsTagRecognitionSupported;
+
+        public ScatterView scatter;
+
+
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public SurfaceWindow1()
+        public MainWindow()
         {
-            InitializeComponent();
-
-            // Add handlers for window availability events
+            // Add handlers for window availability events.
             AddWindowAvailabilityHandlers();
+
+            //Add Images into Sctter View 
+            // scatter.ItemsSource = System.IO.Directory.GetFiles(@"C:\Users\Public\Pictures\Sample Pictures", "*.jpg");
+            scatter.Items.Add();
         }
 
         /// <summary>
-        /// Occurs when the window is about to close. 
+        /// Occurs when the window is about to close.
         /// </summary>
         /// <param name="e"></param>
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
 
-            // Remove handlers for window availability events
+            // Remove handlers for window availability events.
             RemoveWindowAvailabilityHandlers();
         }
 
@@ -51,7 +54,7 @@ namespace surface_app
         /// </summary>
         private void AddWindowAvailabilityHandlers()
         {
-            // Subscribe to surface window availability events
+            // Subscribe to surface window availability events.
             ApplicationServices.WindowInteractive += OnWindowInteractive;
             ApplicationServices.WindowNoninteractive += OnWindowNoninteractive;
             ApplicationServices.WindowUnavailable += OnWindowUnavailable;
@@ -62,7 +65,7 @@ namespace surface_app
         /// </summary>
         private void RemoveWindowAvailabilityHandlers()
         {
-            // Unsubscribe from surface window availability events
+            // Unsubscribe from surface window availability events.
             ApplicationServices.WindowInteractive -= OnWindowInteractive;
             ApplicationServices.WindowNoninteractive -= OnWindowNoninteractive;
             ApplicationServices.WindowUnavailable -= OnWindowUnavailable;

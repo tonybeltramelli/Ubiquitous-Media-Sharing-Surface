@@ -44,7 +44,7 @@ namespace dk.itu.spct
             }
         }
         //Remove owner from images
-        public void removeDevice(string tag_id){
+        public void removeDevice(int tag_id){
             lock (images) {
                 foreach (Image img in images) {
                     if (img.RemoveOwner(tag_id) == 0) {
@@ -65,7 +65,7 @@ namespace dk.itu.spct
         private string m_file_name;
         private Bitmap m_bitmap;
 
-        private List<string> owners;
+        private HashSet<int> owners;
 
         //GET-SET
         public string File_Name {
@@ -78,7 +78,7 @@ namespace dk.itu.spct
                 return m_bitmap;
             }
         }
-        public List<string> Owners {
+        public HashSet<int> Owners {
             get {
                 return owners;
             }
@@ -97,24 +97,19 @@ namespace dk.itu.spct
         
         //Setup image
         private void initialize() {
-            owners = new List<string>();
+            owners = new HashSet<int>();
         }
         //Add device owner to current image
-        public void AddOwner(string tag_id) {
-            if (!String.IsNullOrEmpty(tag_id)) {
-                lock (owners) {
-                    owners.Add(tag_id);
-                }
+        public void AddOwner(int tag_id) {
+            lock (owners) {
+                owners.Add(tag_id);
             }
         }
         //Remove device owner from image
-        public int RemoveOwner(string tag_id) {
-            for (int i = 0; i < owners.Count; i++) {
-                if (owners[i].Equals(tag_id)) {
-                    lock (owners) {
-                        owners.RemoveAt(i);
-                    }
-                }
+        public int RemoveOwner(int tag_id)
+        {
+            lock(owners){
+                owners.RemoveWhere(id => id == tag_id);
             }
             return owners.Count;
         }

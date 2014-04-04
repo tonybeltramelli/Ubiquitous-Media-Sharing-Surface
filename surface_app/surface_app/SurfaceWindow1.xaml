@@ -5,6 +5,12 @@
     Title="SurfaceApplication1"
     >
   <Grid>
-
-  </Grid>
+        <s:ScatterView Name="scatter" Margin="138,0,0,0">
+            <s:ScatterView.ItemTemplate>
+                <DataTemplate>
+                    <Image Source="{Binding}"/>
+                </DataTemplate>
+            </s:ScatterView.ItemTemplate>
+        </s:ScatterView>
+    </Grid>
 </s:SurfaceWindow>

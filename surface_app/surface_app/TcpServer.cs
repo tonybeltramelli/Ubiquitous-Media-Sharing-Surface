@@ -102,7 +102,7 @@ namespace dk.itu.spct.tcp
             }
         }
         //Send image to specific device
-        public void SendImage(string tag_id, Image img) {
+        public void SendImage(int tag_id, Image img) {
             foreach (TcpServerConnection conn in connections) {
                 if (conn.Id.Equals(tag_id)){
                     TCPCommand command = new TCPCommand();
@@ -112,7 +112,7 @@ namespace dk.itu.spct.tcp
             }
         }
         //Request for images
-        public void requestDeviceGallery(string tag_id) {
+        public void requestDeviceGallery(int tag_id) {
             foreach (TcpServerConnection conn in connections) {
                 if (conn.Id.Equals(tag_id)) {
                     TCPCommand command = new TCPCommand();
@@ -122,7 +122,7 @@ namespace dk.itu.spct.tcp
             }
         }
         //Disconnect device from server
-        public void DisconnectDevice(string tag_id) {
+        public void DisconnectDevice(int tag_id) {
             foreach (TcpServerConnection conn in connections) {
                 if (conn.Id.Equals(tag_id)) {
                     conn.forceDisconnect();
