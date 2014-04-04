@@ -1,21 +1,14 @@
 package dk.itu.pervasive.mobile.socket;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.Socket;
-
-import org.apache.commons.io.IOUtils;
-
 import android.os.AsyncTask;
 import android.util.Log;
 import dk.itu.pervasive.mobile.data.DataManager;
 import dk.itu.pervasive.mobile.utils.UString;
 import dk.itu.pervasive.mobile.utils.dataStructure.URLInformation;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
+import java.net.Socket;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -28,6 +21,7 @@ public class SocketConnection extends AsyncTask<String, Void, Void>
 	private RequestDelegate _delegate;
 	private String _imagePath;
 	private int _index;
+    private String _type;
 	
 	public SocketConnection(RequestDelegate delegate, String imagePath, int index)
 	{
@@ -39,18 +33,29 @@ public class SocketConnection extends AsyncTask<String, Void, Void>
 	@Override
 	protected Void doInBackground(String... types)
 	{
-		if (types[0] == SocketConnection.SEND)
+        _type = types[0];
+
+		if (_type == SocketConnection.SEND)
 		{
 			_send();
-		} else if (types[0] == SocketConnection.RECEIVE)
+		} else if (_type == SocketConnection.RECEIVE)
 		{
 			_receive();
 		}
 		
 		return null;
 	}
-	
-	private Socket _createSocket()
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+
+        if( _type == SocketConnection.SEND )
+            _delegate.onRequestSuccess(_index + 1);
+
+
+    }
+
+    private Socket _createSocket()
 	{
 		Socket socket = null;
 		
@@ -102,7 +107,6 @@ public class SocketConnection extends AsyncTask<String, Void, Void>
 			bis.close();
 			socket.close();
 			
-			_delegate.onRequestSuccess(_index + 1);
 		} catch (IOException e)
 		{
 			e.printStackTrace();
