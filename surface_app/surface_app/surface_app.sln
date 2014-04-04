@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "surface_app", "surface_app\surface_app.csproj", "{872F3119-78EA-4146-9AD3-9FB1A04D5D4B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "surface_app", "surface_app.csproj", "{872F3119-78EA-4146-9AD3-9FB1A04D5D4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
