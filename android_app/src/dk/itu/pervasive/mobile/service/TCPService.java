@@ -7,16 +7,18 @@ import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.activity.MainActivity;
-import dk.itu.pervasive.mobile.data.DataManager;
+import dk.itu.pervasive.mobile.gallery2.ImageManager2;
+import dk.itu.pervasive.mobile.socket.RequestDelegate;
 import dk.itu.pervasive.mobile.socket.SocketConnection;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
  */
-public class TCPService extends Service
+public class TCPService extends Service implements RequestDelegate
 {
 	private final int NOTIFICATION = R.string.tcp_service_started;
 	private final IBinder _binder = new TCPServiceBinder(this);
@@ -37,10 +39,7 @@ public class TCPService extends Service
 		
 		_showNotification();
 		
-		Uri imageUri = Uri.parse("content://media/external/images/media/962");
-		
-		_socketConnection = new SocketConnection(DataManager.getInstance().getPathFromUri(imageUri));
-		_socketConnection.execute();
+		onRequestSuccess(0);
 	}
 	
 	@Override
@@ -52,8 +51,6 @@ public class TCPService extends Service
 	@Override
 	public void onDestroy()
 	{
-		_socketConnection.cancel(true);
-		
 		Toast.makeText(this, R.string.tcp_service_stopped, Toast.LENGTH_SHORT).show();
 	}
 	
@@ -70,5 +67,15 @@ public class TCPService extends Service
 				.getNotification();
 		
 		_notificationManager.notify(NOTIFICATION, notification);
+	}
+
+	@Override
+	public void onRequestSuccess(int index)
+	{
+		if(index == ImageManager2.getInstance().getImagePaths().size()) return;
+		
+		_socketConnection = null;
+		_socketConnection = new SocketConnection(this, ImageManager2.getInstance().getImagePaths().get(index), index);
+		_socketConnection.execute();
 	}
 }
