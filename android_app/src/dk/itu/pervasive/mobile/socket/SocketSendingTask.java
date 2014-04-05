@@ -2,17 +2,18 @@ package dk.itu.pervasive.mobile.socket;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.OutputStreamWriter;
+import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.eclipsesource.json.JsonObject;
 
+import dk.itu.pervasive.mobile.gallery2.ImageManager2;
 import dk.itu.pervasive.mobile.utils.Constants;
 
 /**
@@ -20,9 +21,6 @@ import dk.itu.pervasive.mobile.utils.Constants;
  */
 public class SocketSendingTask extends AsyncTask<String, Void, Void>
 {
-	public static String MESSAGE = "message";
-	public static String IMAGE = "image";
-	//
 	private RequestDelegate _delegate;
 	private Socket _socket;
 	
@@ -33,61 +31,66 @@ public class SocketSendingTask extends AsyncTask<String, Void, Void>
 	}
 	
 	@Override
-	protected Void doInBackground(String... args)
+	protected Void doInBackground(String... arg0)
 	{
-		if (args[0] == SocketSendingTask.MESSAGE)
-		{
-			_sendMessage(args[1]);
-		} else if (args[0] == SocketSendingTask.IMAGE)
-		{
-			_sendImage(args[1]);
-		}
+		_send(0);
 		
 		return null;
 	}
 	
-	private void _sendImage(String imagePath)
+	private void _send(int index)
 	{
-		Log.wtf("_sendImage", imagePath);
+		List<String> images = ImageManager2.getInstance().getImagePaths();
 		
+		if (index == images.size()) return;
+			
+		_sendMessage(images.get(index));
+		_sendImage(index);
+	}
+	
+	private void _sendImage(int index)
+	{
 		try
 		{
-			File file = new File(imagePath);
-	        
-	        long fileSize = file.length();
-	        if (fileSize > Integer.MAX_VALUE) {
-	        	Log.wtf("_sendImage", "File is too large.");
-	        }
-	        
-	        Log.wtf("_sendImage", "Sending image size : " + fileSize);
-	        
-	        byte[] bytes = new byte[(int) fileSize];
-	        FileInputStream fis = new FileInputStream(file);
-	        BufferedInputStream bis = new BufferedInputStream(fis);
-	        BufferedOutputStream out = new BufferedOutputStream(_socket.getOutputStream());
-	
-	        int count;
-	        while ((count = bis.read(bytes)) > 0)
-	        {
-	            out.write(bytes, 0, count);
-	        }
-	
-	        out.flush();
-	        //out.close();
-	        fis.close();
-	        bis.close();
-	        
-	        Log.wtf("_sendImage", "End sending");
-		} catch (Exception e)
+			File imageFile = new File(ImageManager2.getInstance().getImagePaths().get(index));
+			
+			long fileSize = imageFile.length();
+			if (fileSize > Integer.MAX_VALUE)
+			{
+				Log.wtf("_sendImage", "File is too large.");
+			}
+			
+			Log.wtf("_sendImage", "Sending image size : "+fileSize);
+			
+			byte[] bytes = new byte[(int) fileSize];
+			
+			FileInputStream fis = new FileInputStream(imageFile);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			BufferedOutputStream out = new BufferedOutputStream(_socket.getOutputStream());
+			
+			out.write(String.valueOf(fileSize).getBytes());
+			
+			int count;
+			while ((count = bis.read(bytes)) > 0)
+			{
+				out.write(bytes, 0, count);
+				Log.wtf("_sendImage", "Sending data");
+			}
+			
+			out.flush();
+			//out.close();
+			fis.close();
+			bis.close();
+			
+			_send(index + 1);
+		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void _sendMessage(String imagePath)
 	{
-		Log.wtf("_sendMessage", imagePath);
-		
 		JsonObject json = new JsonObject();
 		json.add(Constants.Action.ACTION, Constants.Action.SEND);
 		
@@ -96,7 +99,7 @@ public class SocketSendingTask extends AsyncTask<String, Void, Void>
 		long fileSize = imageFile.length();
 		if (fileSize > Integer.MAX_VALUE)
 		{
-			Log.wtf("_sendMessage", "File is too large.");
+			Log.wtf("SocketConnection", "File is too large.");
 		}
 		
 		json.add(Constants.NAME, imageFile.getName());
@@ -104,17 +107,7 @@ public class SocketSendingTask extends AsyncTask<String, Void, Void>
 		
 		String jsonString = "[" + json.toString() + "] \n";
 		
-		Log.wtf("_sendMessage json", jsonString);
-		
-		try
-		{
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(_socket.getOutputStream(), "UTF-16"));
-			writer.write(jsonString);
-			writer.flush();	
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+		Log.wtf("_sendJSONAction", jsonString);
 	}
 	
 	@Override
