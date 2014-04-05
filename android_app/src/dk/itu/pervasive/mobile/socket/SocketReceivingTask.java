@@ -1,12 +1,18 @@
 package dk.itu.pervasive.mobile.socket;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
+import dk.itu.pervasive.mobile.data.DataManager;
 import dk.itu.pervasive.mobile.utils.Constants;
+import dk.itu.pervasive.mobile.utils.UString;
+import dk.itu.pervasive.mobile.utils.dataStructure.URLInformation;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Random;
 
@@ -40,7 +46,6 @@ public class SocketReceivingTask implements Runnable {
             try {
                 String message = reader.readLine();
                 if (message != null){
-                    Log.i("NET" , "received new line");
                     dispatchMessage(message);
                 }
                 else
@@ -80,10 +85,10 @@ public class SocketReceivingTask implements Runnable {
 
         if (action.equals(Constants.Action.REQUEST) || action.equals(Constants.Action.SUCCESS)) {//asking for images or server received image.send next
             Log.i("NET", "Handling action \"request and success\"");
-            _delegate.onRequestReceiveSuccess();
+//            _delegate.onRequestReceiveSuccess();
         } else if (action.equals(Constants.Action.SEND)) {//server is sending an image.prepare to receive
             Log.i("NET", "Handling action \"send\"");
-            handleImageReceiving(message);
+            newHandleImageReceiving(message);
         }
     }
 
@@ -107,15 +112,68 @@ public class SocketReceivingTask implements Runnable {
     }
 
 
+    private void newHandleImageReceiving(String message){
+        File imageFile = null;
+        imageFile = createFileInSdCard(message);
+        BufferedOutputStream bos = null;
+        Socket receiveSocket = null;
+        BufferedInputStream stream = null;
+        try{
+            URLInformation urlInformation = UString.getUrlInformation(DataManager.getInstance().getSurfaceAddress());
+            receiveSocket = new Socket();
+            //connect to the server port + 1
+            try {
+
+                receiveSocket.connect(new InetSocketAddress(urlInformation.getIp(), urlInformation.getPort() +1 ), 1000);
+            }catch (Exception e){
+                Log.i("NET" , "cannot connect");
+            }
+
+            stream = new BufferedInputStream(receiveSocket.getInputStream());
+            bos = new BufferedOutputStream(new FileOutputStream(imageFile));
+
+            byte[] buffer = new byte[4096];
+
+            int read = 0;
+            try{
+                while( (read = stream.read(buffer)) != -1 ){
+                    bos.write(buffer , 0 , read);
+                }
+
+            }catch (Exception e){
+                Log.i("NET" , "cannot read");
+            }
+
+            bos.flush();
+            bos.close();
+
+            stream.close();
+            receiveSocket.close();
+            _delegate.onReceivedImageSuccess( imageFile.getAbsolutePath() );
+
+            sendSuccessToServer();
+
+        }catch (Exception e){
+           Log.i("NET" , "skata skata");
+           if( !receiveSocket.isClosed() )
+               try {
+                   receiveSocket.close();
+               } catch (IOException e1) {
+               }
+
+        }
+    }
+
+
     private void handleImageReceiving(String message) throws IOException { //if anything goes wrong throw exception so that it will be handled in a single point in run method
         File imageFile = null;
         BufferedOutputStream bos = null;
         try {
 
+
             imageFile = createFileInSdCard(message);
 
             bos = new BufferedOutputStream(new FileOutputStream(imageFile));
-
             BufferedInputStream stream = new BufferedInputStream(_socket.getInputStream());
 
             long fileSize = Long.parseLong(getJsonAttribute(message, Constants.SIZE));
@@ -123,32 +181,60 @@ public class SocketReceivingTask implements Runnable {
             byte[] buffer = new byte[4096];
             int counter = 0;
             int read = 0;
-//
-//            int chunks = (int)(fileSize / 4096);
-//            int lastChunk =(int) (fileSize - (chunks * 4096));
-//
-//            for( int i = 0 ; i < chunks ; i++ ){
-//                stream.read(buffer);
+
+
+//            while( counter < fileSize ){
+//                counter += stream.read(buffer);
 //                bos.write(buffer);
 //            }
 //
-//            stream.read(buffer , 0 , lastChunk);
-//            bos.write(buffer , 0 , lastChunk);
+//            int chunks = (int)(fileSize / 2048);
+//            int lastChunk =(int) (fileSize - (chunks * 2048));
+//
+//            for( int i = 0 ; i < chunks ; i++ ){
+//                int count = stream.read(buffer , 0 , 2048);
+//                bos.write(buffer , 0 , count);
+//
+//                Log.i("NET" , "data : " + count );
+//            }
+////
+//            int skata = stream.read(buffer , 0 , lastChunk);
+//            bos.write(buffer , 0 , skata);
+
+//            for( int i = 0 ; i < fileSize -2 ; i++ ){
+//                Log.i("NET" , "" + i);
+//                stream.read(buffer);
+//                bos.write(buffer);
+//            }
 
 
-            while( (counter < fileSize) && (read = stream.read(buffer , 0 , (int)Math.min(buffer.length , fileSize - counter))) > 0 ){
-                bos.write(buffer , 0 , read );
-                counter += read;
-                Log.i("NET" , "data count : " + counter);
-            }
 
-//            for (int read = stream.read(buffer); read != -1; read = stream.read(buffer)){
+//            while((fileSize > 0 ) && (read = stream.read(buffer, 0, (int)Math.min(buffer.length, fileSize ))) != -1){
+//                bos.write(buffer,0,read);
+//                bos.flush();
+//                fileSize -= read;
+//                Log.i("NET" , "size : " + fileSize);
+//            }
+
+            Bitmap bitmap = BitmapFactory.decodeStream(stream);
+            Log.i("NET" , "width :  " + String.valueOf(bitmap.getWidth()));
+
+            Log.i("NET" , "bla bla");
+//            while( (counter < fileSize)  ){
+//                read = stream.read(buffer, 0, (int) Math.min(buffer.length, fileSize - counter));
+//                bos.write(buffer , 0 , read );
+//                counter += read;
+//                Log.i("NET" , "data count : " + counter);
+//            }
+
+
+//            for (read = stream.read(buffer); counter < fileSize; read = stream.read(buffer , 0 , (int)Math.min(buffer.length , fileSize - counter))){
 //                bos.write(buffer, 0, read);
 //                counter += read;
 //                Log.i("NET" , "data count : " + counter);
 //            }
 
-            Log.i("NET" , "Finshed reading image");
+            Log.i("NET", "Finished reading image");
             bos.flush();
             bos.close();
 
