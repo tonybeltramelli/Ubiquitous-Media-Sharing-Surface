@@ -1,11 +1,13 @@
 package dk.itu.pervasive.mobile.utils;
 
+import java.io.ByteArrayOutputStream;
+
+import android.R.raw;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import dk.itu.pervasive.mobile.data.DataManager;
 import dk.itu.pervasive.mobile.utils.dataStructure.URLInformation;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -14,9 +16,11 @@ public class UString
 {
 	public static URLInformation getUrlInformation(String rawUrl)
 	{
+		if(rawUrl == null || rawUrl == "") return null;
+		
 		String ip = rawUrl.substring(0, rawUrl.indexOf(":"));
 		int port = Integer.valueOf(rawUrl.substring(rawUrl.indexOf(":") + 1, rawUrl.indexOf("/") != -1 ? rawUrl.indexOf("/") : rawUrl.length()));
-
+		
 		return new URLInformation(ip, port);
 	}
 	
