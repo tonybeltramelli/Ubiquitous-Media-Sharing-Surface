@@ -10,6 +10,9 @@ using Microsoft.Surface;
 using Microsoft.Surface.Presentation;
 using Microsoft.Surface.Presentation.Controls;
 using Microsoft.Surface.Presentation.Input;
+using dk.itu.spct;
+using System.Drawing;
+using System.Collections.ObjectModel;
 
 namespace surface_app
 {
@@ -23,6 +26,9 @@ namespace surface_app
 
         public ScatterView scatter;
 
+        private Gallery gallery;
+
+        private ObservableCollection<string> images;
 
         /// <summary>
         /// Default constructor.
@@ -34,7 +40,21 @@ namespace surface_app
 
             //Add Images into Sctter View 
             // scatter.ItemsSource = System.IO.Directory.GetFiles(@"C:\Users\Public\Pictures\Sample Pictures", "*.jpg");
-            scatter.Items.Add();
+            
+
+            //System.Threading.Thread.Sleep(1000);
+
+            TestImage testImg = new TestImage("\\Resources\\Koala.jpg", "tag");
+            images.Add("\\Resources\\Koala.jpg");
+
+            scatter.ItemsSource = "/Resources"; //Gallery.Instance.Images;
+            
+            // BitmapImage img = new BitmapImage(new Uri("\\Resources\\Koala.jpg", UriKind.Relative));
+            // System.Windows.Controls.Image img = new System.Windows.Controls.Image();
+            // img.Source = new Bitmap(new Uri("\\Resources\\Koala.jpg", UriKind.Relative));
+            // dk.itu.spct.Image testImg = new dk.itu.spct.Image("Koala.jsp", img);
+            // Gallery.Instance.AddImage("");
+
         }
 
         /// <summary>
@@ -48,6 +68,8 @@ namespace surface_app
             // Remove handlers for window availability events.
             RemoveWindowAvailabilityHandlers();
         }
+
+
 
         /// <summary>
         /// Adds handlers for window availability events.
@@ -102,5 +124,18 @@ namespace surface_app
         {
             //TODO: disable audio, animations here
         }
+    }
+
+    public class TestImage
+    {
+        private string path;
+        private string tag;
+
+        public TestImage(string path, string tag)
+        {
+            this.path = path;
+            this.tag = tag;
+        }
+
     }
 }
