@@ -1,11 +1,5 @@
 package dk.itu.pervasive.mobile.service;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
-import java.util.List;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,9 +8,6 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.eclipsesource.json.JsonObject;
-
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.activity.MainActivity;
 import dk.itu.pervasive.mobile.gallery2.ImageManager2;
@@ -24,7 +15,10 @@ import dk.itu.pervasive.mobile.socket.RequestDelegate;
 import dk.itu.pervasive.mobile.socket.SocketCreatingTask;
 import dk.itu.pervasive.mobile.socket.SocketReceivingTask;
 import dk.itu.pervasive.mobile.socket.SocketSendingTask;
-import dk.itu.pervasive.mobile.utils.Constants;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.util.List;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -61,8 +55,6 @@ public class TCPService extends Service implements RequestDelegate
 	{
 		SocketCreatingTask socketTask = new SocketCreatingTask(this);
 		socketTask.execute();
-		
-		
 	}
 	
 	@Override
@@ -105,24 +97,19 @@ public class TCPService extends Service implements RequestDelegate
 		_socket = socket;
 		// if initialization worked start the receiver to wait for the request
 		// to send images
-	//TODO
-	//	SocketReceivingTask task = new SocketReceivingTask(_socket, this);
-	//	new Thread(task).start();
+		SocketReceivingTask task = new SocketReceivingTask(_socket, this);
+		new Thread(task).start();
 		
 		//TODO remove
 		//onRequestReceiveSuccess();
-		
-		SocketSendingTask socketTask = new SocketSendingTask(this, _socket);
-		socketTask.execute(_imagePaths.get(_imageIndex));
 	}
 	
 	@Override
 	public void onRequestReceiveSuccess()
 	{
 		if (_imageIndex >= _imagePaths.size()) return;
-	
-		//TODO
-	//	_sendImage(_imageIndex);
+		
+		_sendImage(_imageIndex);
 		
 		_imageIndex ++;
 	}

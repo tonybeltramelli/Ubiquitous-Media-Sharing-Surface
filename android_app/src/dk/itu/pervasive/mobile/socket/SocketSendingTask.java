@@ -1,24 +1,12 @@
 package dk.itu.pervasive.mobile.socket;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
-import java.util.Random;
-
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
-
 import com.eclipsesource.json.JsonObject;
-
 import dk.itu.pervasive.mobile.utils.Constants;
+
+import java.io.*;
+import java.net.Socket;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -37,68 +25,11 @@ public class SocketSendingTask extends AsyncTask<String, Void, Void>
 	@Override
 	protected Void doInBackground(String... args)
 	{
-		//_sendMessage(args[0]);
-		//_sendImage(args[0]);
-		
-		_receive();
+		_sendMessage(args[0]);
+		_sendImage(args[0]);
 		
 		return null;
 	}
-	
-	private void _receive()
-	{
-		File imageFile = null;
-        try {
-
-        	Log.wtf("_receive", "start");
-
-            imageFile = createFileInSdCard("output.jpg");
-            
-            InputStream is = _socket.getInputStream();
-			int bufferSize = _socket.getReceiveBufferSize();
-			
-			FileOutputStream fos = null;
-			BufferedOutputStream bos = null;
-			
-			try
-			{
-				fos = new FileOutputStream(imageFile);
-				bos = new BufferedOutputStream(fos);
-			} catch (FileNotFoundException ex)
-			{
-				Log.wtf("_receive", "File not found. ");
-			}
-			
-			byte[] bytes = new byte[bufferSize]; //new byte[1024];
-			
-			int count;
-			while ((count = is.read(bytes)) != -1)
-			{
-				bos.write(bytes, 0, count);
-				Log.wtf("_receive", "read " + count);
-			}
-			
-			_delegate.onReceivedImageSuccess(imageFile.getAbsolutePath());
-
-			bos.flush();
-			//bos.close();
-			is.close();
-			//_socket.close();
-            
-            Log.wtf("handleImageReceiving", "Save image");       
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-	}
-	
-	private File createFileInSdCard( String fileName ){
-
-        String fullImagePath = Environment.getExternalStoragePublicDirectory("Download").toString() + "/" + Math.round(Math.random() * 1000) + fileName;
-
-        Log.wtf("create", fullImagePath);
-        
-        return new File(fullImagePath);
-    }
 	
 	private void _sendImage(String imagePath)
 	{
@@ -121,7 +52,7 @@ public class SocketSendingTask extends AsyncTask<String, Void, Void>
 	        BufferedOutputStream out = new BufferedOutputStream(_socket.getOutputStream());
 	
 	        int count;
-	        while ((count = bis.read(bytes)) != -1)
+	        while ((count = bis.read(bytes)) > 0)
 	        {
 	            out.write(bytes, 0, count);
 	        }
