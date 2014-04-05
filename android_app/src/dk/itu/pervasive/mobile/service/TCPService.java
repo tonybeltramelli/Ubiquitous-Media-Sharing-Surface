@@ -38,7 +38,6 @@ public class TCPService extends Service implements RequestDelegate
 	private Socket _socket;
 	private int _imageIndex = 0;
 	private List<String> _imagePaths;
-	private boolean _messageSended = false;
 	
 	@Override
 	public IBinder onBind(Intent intent)
@@ -116,19 +115,9 @@ public class TCPService extends Service implements RequestDelegate
 	{
 		if (_imageIndex >= _imagePaths.size()) return;
 		
-		if(!_messageSended)
-		{
-			SocketSendingTask socketTask = new SocketSendingTask(this, _socket);
-			socketTask.execute(SocketSendingTask.MESSAGE, _imagePaths.get(_imageIndex));
-			
-			_messageSended = true;
-		}else{
-			_sendImage(_imageIndex);
-			
-			_imageIndex ++;
-			
-			_messageSended = false;
-		}
+		_sendImage(_imageIndex);
+		
+		_imageIndex ++;
 	}
 	
 	private void _sendImage(int i)
@@ -136,7 +125,7 @@ public class TCPService extends Service implements RequestDelegate
 		Log.wtf("_sendImage", String.valueOf(_imageIndex));
 		
 		SocketSendingTask socketTask = new SocketSendingTask(this, _socket);
-		socketTask.execute(SocketSendingTask.IMAGE, _imagePaths.get(_imageIndex));
+		socketTask.execute(_imagePaths.get(_imageIndex));
 	}
 	
 	@Override

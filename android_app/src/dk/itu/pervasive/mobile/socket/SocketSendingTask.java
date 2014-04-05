@@ -20,9 +20,6 @@ import dk.itu.pervasive.mobile.utils.Constants;
  */
 public class SocketSendingTask extends AsyncTask<String, Void, Void>
 {
-	public static String MESSAGE = "message";
-	public static String IMAGE = "image";
-	//
 	private RequestDelegate _delegate;
 	private Socket _socket;
 	
@@ -35,13 +32,8 @@ public class SocketSendingTask extends AsyncTask<String, Void, Void>
 	@Override
 	protected Void doInBackground(String... args)
 	{
-		if (args[0] == SocketSendingTask.MESSAGE)
-		{
-			_sendMessage(args[1]);
-		} else if (args[0] == SocketSendingTask.IMAGE)
-		{
-			_sendImage(args[1]);
-		}
+		_sendMessage(args[0]);
+		_sendImage(args[0]);
 		
 		return null;
 	}
