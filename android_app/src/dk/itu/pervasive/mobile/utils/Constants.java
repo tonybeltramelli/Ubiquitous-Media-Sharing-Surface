@@ -8,10 +8,10 @@ public class Constants
 	public final class Action
 	{
 		public static final String ACTION = "action";
-		public static final int START = 0;
-		public static final int REQUEST = 1;
-		public static final int SEND = 2;
-		public static final int SUCCESS = 3;
+		public static final String START = "0";
+		public static final String REQUEST = "1";
+		public static final String SEND = "2";
+		public static final String SUCCESS = "3";
 	}
 	
 	public static final String TAG_ID = "tag_id";

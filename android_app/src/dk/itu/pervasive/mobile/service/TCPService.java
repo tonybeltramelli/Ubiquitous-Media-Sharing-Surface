@@ -1,19 +1,22 @@
 package dk.itu.pervasive.mobile.service;
 
-import java.net.Socket;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.activity.MainActivity;
+import dk.itu.pervasive.mobile.gallery2.ImageManager2;
 import dk.itu.pervasive.mobile.socket.RequestDelegate;
 import dk.itu.pervasive.mobile.socket.SocketCreatingTask;
-import dk.itu.pervasive.mobile.socket.SocketSendingTask;
+import dk.itu.pervasive.mobile.socket.SocketReceivingTask;
+
+import java.io.IOException;
+import java.net.Socket;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -87,16 +90,38 @@ public class TCPService extends Service implements RequestDelegate
 	public void onRequestCreateSuccess(Socket socket)
 	{
 		_socket = socket;
-		
+        //if initialization worked start the receiver to wait for the request to send images
+        SocketReceivingTask task = new SocketReceivingTask(_socket , this);
+        new Thread(task).start();
+
 		//will execute onRequestSendSuccess
-		SocketSendingTask socketTask = new SocketSendingTask(this, _socket);
-		socketTask.execute();
+//		SocketSendingTask socketTask = new SocketSendingTask(this, _socket);
+//		socketTask.execute();
 	}
 	
 	@Override
 	public void onRequestReceiveSuccess()
 	{
+        //TODO
+        //start here the sending process when notified by the receiver
 		//TODO
 		//_socket.close();
 	}
+
+    @Override
+    public void onRequestFailure() {
+
+        if( _socket != null )
+            if( !_socket.isClosed()){
+                Log.i("NET" , "TCP service on failure. Closing socket");
+                try {
+                    _socket.close();
+                } catch (IOException e) { }
+            }
+    }
+
+    @Override
+    public void onReceivedImageSuccess(String path) {
+        ImageManager2.getInstance().insertImageToGallery(path);
+    }
 }
