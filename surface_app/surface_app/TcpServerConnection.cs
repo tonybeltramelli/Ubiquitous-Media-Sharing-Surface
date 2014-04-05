@@ -119,7 +119,7 @@ namespace dk.itu.spct.tcp
                     Message message = messagesToSend[0];
                     try {
                         if (!String.IsNullOrEmpty(message.text)) {
-                            StreamWriter streamWriter = new StreamWriter(networkStream, m_encoding);
+                            StreamWriter streamWriter = new StreamWriter(networkStream);
                             streamWriter.WriteLine(message.text);
                             streamWriter.Flush();
 

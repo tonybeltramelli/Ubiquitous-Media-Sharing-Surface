@@ -2,19 +2,21 @@
 using System.Drawing;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace dk.itu.spct
 {
     //Gallery representation
     public class Gallery{
 
-        private List<Image> images;
+        private ObservableCollection<Image> images;
 
         //Get-Set
-        public List<Image> Images{
+        public ObservableCollection<Image> Images
+        {
             get {
                 lock (images) {
-                    return new List <Image> (images) ; 
+                    return new ObservableCollection<Image>(images); 
                 }
             }
         }
@@ -35,7 +37,7 @@ namespace dk.itu.spct
         
         //Setup gallery
         private void initialize() {
-            images = new List<Image>();
+            images = new ObservableCollection<Image>();
         }
         //Add image
         public void AddImage(Image img) {
@@ -93,6 +95,12 @@ namespace dk.itu.spct
             }
         }
 
+        public Image(string fileName, Bitmap bitMap)
+        {
+            initialize();
+            m_file_name = fileName;
+            m_bitmap = bitMap;
+        }
         //Class implementation
         
         //Setup image

@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Media;
 using Microsoft.Surface.Presentation.Controls;
 using System.Windows.Media.Imaging;
-
+using System.Collections.ObjectModel;
 namespace surface_app
 {
     class PhonePin
@@ -27,6 +27,7 @@ namespace surface_app
         
         // phone's image gallery
         // private HashSet<BitmapImage> gallery; 
+
 
         #endregion
 

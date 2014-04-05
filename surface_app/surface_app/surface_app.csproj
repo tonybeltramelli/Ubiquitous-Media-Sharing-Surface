@@ -60,6 +60,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MainViewModel.cs" />
     <Compile Include="Gallery.cs" />
     <Compile Include="Reusable Classes\DragDropScatterView.cs" />
     <Compile Include="TcpCommand.cs" />
@@ -111,6 +112,7 @@
     <Content Include="Resources\icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Koala.jpg" />
     <Content Include="SurfaceApplication1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
