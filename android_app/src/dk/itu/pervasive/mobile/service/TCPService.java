@@ -1,11 +1,5 @@
 package dk.itu.pervasive.mobile.service;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
-import java.util.List;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,17 +8,15 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.eclipsesource.json.JsonObject;
-
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.activity.MainActivity;
 import dk.itu.pervasive.mobile.gallery2.ImageManager2;
 import dk.itu.pervasive.mobile.socket.RequestDelegate;
 import dk.itu.pervasive.mobile.socket.SocketCreatingTask;
 import dk.itu.pervasive.mobile.socket.SocketReceivingTask;
-import dk.itu.pervasive.mobile.socket.SocketSendingTask;
-import dk.itu.pervasive.mobile.utils.Constants;
+
+import java.io.IOException;
+import java.net.Socket;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -33,12 +25,9 @@ public class TCPService extends Service implements RequestDelegate
 {
 	private final int NOTIFICATION = R.string.tcp_service_started;
 	private final IBinder _binder = new TCPServiceBinder(this);
-	
+
 	private NotificationManager _notificationManager;
 	private Socket _socket;
-	private int _imageIndex = 0;
-	private List<String> _imagePaths;
-	private boolean _messageSended = false;
 	
 	@Override
 	public IBinder onBind(Intent intent)
@@ -53,17 +42,19 @@ public class TCPService extends Service implements RequestDelegate
 		
 		_showNotification();
 		
-		_imagePaths = ImageManager2.getInstance().getImagePaths();
-		
 		_createSocket();
 	}
 	
 	private void _createSocket()
 	{
+		//will execute onRequestCreateSuccess
 		SocketCreatingTask socketTask = new SocketCreatingTask(this);
 		socketTask.execute();
+
+//        SocketReceivingTask task = new SocketReceivingTask(null , this);
+//        new Thread(task).start();
 	}
-	
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
@@ -94,69 +85,46 @@ public class TCPService extends Service implements RequestDelegate
 	@Override
 	public void onRequestSendSuccess()
 	{
-		//in receive success instead
-		//onRequestReceiveSuccess();
+		//TODO
+		//_socket.close();
 	}
 	
 	@Override
 	public void onRequestCreateSuccess(Socket socket)
 	{
 		_socket = socket;
-		// if initialization worked start the receiver to wait for the request
-		// to send images
-		SocketReceivingTask task = new SocketReceivingTask(_socket, this);
-		new Thread(task).start();
-		
-		//TODO remove
-		//onRequestReceiveSuccess();
+        //if initialization worked start the receiver to wait for the request to send images
+        SocketReceivingTask task = new SocketReceivingTask(_socket , this);
+        new Thread(task).start();
+
+		//will execute onRequestSendSuccess
+//		SocketSendingTask socketTask = new SocketSendingTask(this, _socket);
+//		socketTask.execute();
 	}
 	
 	@Override
 	public void onRequestReceiveSuccess()
 	{
-		if (_imageIndex >= _imagePaths.size()) return;
-		
-		if(!_messageSended)
-		{
-			SocketSendingTask socketTask = new SocketSendingTask(this, _socket);
-			socketTask.execute(SocketSendingTask.MESSAGE, _imagePaths.get(_imageIndex));
-			
-			_messageSended = true;
-		}else{
-			_sendImage(_imageIndex);
-			
-			_imageIndex ++;
-			
-			_messageSended = false;
-		}
+        //TODO
+        //start here the sending process when notified by the receiver
+		//TODO
+		//_socket.close();
 	}
-	
-	private void _sendImage(int i)
-	{
-		Log.wtf("_sendImage", String.valueOf(_imageIndex));
-		
-		SocketSendingTask socketTask = new SocketSendingTask(this, _socket);
-		socketTask.execute(SocketSendingTask.IMAGE, _imagePaths.get(_imageIndex));
-	}
-	
-	@Override
-	public void onRequestFailure()
-	{
-		if (_socket != null) if (!_socket.isClosed())
-		{
-			Log.i("NET", "TCP service on failure. Closing socket");
-			try
-			{
-				_socket.close();
-			} catch (IOException e)
-			{
-			}
-		}
-	}
-	
-	@Override
-	public void onReceivedImageSuccess(String path)
-	{
-		ImageManager2.getInstance().insertImageToGallery(path);
-	}
+
+    @Override
+    public void onRequestFailure() {
+
+        if( _socket != null )
+            if( !_socket.isClosed()){
+                Log.i("NET" , "TCP service on failure. Closing socket");
+                try {
+                    _socket.close();
+                } catch (IOException e) { }
+            }
+    }
+
+    @Override
+    public void onReceivedImageSuccess(String path) {
+        ImageManager2.getInstance().insertImageToGallery(path);
+    }
 }
