@@ -61,6 +61,8 @@ public class TCPService extends Service implements RequestDelegate
 	{
 		SocketCreatingTask socketTask = new SocketCreatingTask(this);
 		socketTask.execute();
+		
+		
 	}
 	
 	@Override
@@ -103,19 +105,24 @@ public class TCPService extends Service implements RequestDelegate
 		_socket = socket;
 		// if initialization worked start the receiver to wait for the request
 		// to send images
-		SocketReceivingTask task = new SocketReceivingTask(_socket, this);
-		new Thread(task).start();
+	//TODO
+	//	SocketReceivingTask task = new SocketReceivingTask(_socket, this);
+	//	new Thread(task).start();
 		
 		//TODO remove
 		//onRequestReceiveSuccess();
+		
+		SocketSendingTask socketTask = new SocketSendingTask(this, _socket);
+		socketTask.execute(_imagePaths.get(_imageIndex));
 	}
 	
 	@Override
 	public void onRequestReceiveSuccess()
 	{
 		if (_imageIndex >= _imagePaths.size()) return;
-		
-		_sendImage(_imageIndex);
+	
+		//TODO
+	//	_sendImage(_imageIndex);
 		
 		_imageIndex ++;
 	}
