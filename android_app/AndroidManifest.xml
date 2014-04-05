@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dk.itu.pervasive.mobile"
     android:versionCode="1"
@@ -7,10 +8,22 @@
         android:minSdkVersion="15"
         android:targetSdkVersion="18" />
 
+    <permission
+        android:name="dk.itu.pervasive.mobile.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="dk.itu.pervasive.mobile.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -26,11 +39,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="dk.itu.pervasive.mobile.preferences.CustomPreference" >
+        <activity
+            android:name="dk.itu.pervasive.mobile.activity.LocationMapActivity"
+            android:label="@string/title_activity_location_map" >
         </activity>
+        <activity
+            android:name="dk.itu.pervasive.mobile.activity.LocationBuildingActivity"
+            android:label="@string/title_activity_location_building" >
+        </activity>
+        <activity android:name="dk.itu.pervasive.mobile.preferences.CustomPreference"></activity>
 
-        <service android:name="dk.itu.pervasive.mobile.service.TCPService" >
-        </service>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCQUYVsVRQKvXSzBXN6Ma5LKDMPr2SgMO4" />
     </application>
 
 </manifest>

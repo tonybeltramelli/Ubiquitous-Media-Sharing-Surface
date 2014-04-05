@@ -1,23 +1,16 @@
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 
 public class Server
 {
 	public static void main(String[] args) throws IOException
 	{
 		ServerSocket serverSocket = null;
-		
-		int counter = 0;
-		final int MAX = 5;
 		
 		try
 		{
@@ -32,9 +25,6 @@ public class Server
 		
 		int bufferSize = 0;
 		
-		DataInputStream input = null;
-		BufferedReader reader;
-		
 		try
 		{
 			socket = serverSocket.accept();
@@ -47,22 +37,18 @@ public class Server
 		try
 		{
 			is = socket.getInputStream();
-			input = new DataInputStream(is);
-			
-			//reader = new BufferedReader(is);
 			bufferSize = socket.getReceiveBufferSize();
 			System.out.println("Buffer size: " + bufferSize);
 		} catch (IOException ex)
 		{
 			System.out.println("Can't get socket input stream. ");
-		}
+		}	
 		
-		while (counter < MAX)
-		{
+		/*
+		while (true)
+		{*/
 			FileOutputStream fos = null;
 			BufferedOutputStream bos = null;
-			
-			System.out.println("New buffer size: " + bufferSize);
 			
 			try
 			{
@@ -73,28 +59,18 @@ public class Server
 				System.out.println("File not found. ");
 			}
 			
-			byte[] bytes = new byte[bufferSize];
-			/*byte[] fileSizeBytes = new byte[8];
- 			
-			is.read(fileSizeBytes);
-			
-			ByteBuffer b = ByteBuffer.wrap(fileSizeBytes);*/
-			
-			//System.out.println("file size : "+input.readLong());
+			byte[] bytes = new byte[bufferSize]; //new byte[1024];
 			
 			int count;
 			while ((count = is.read(bytes)) != -1)
 			{
-				System.out.println("read byte : " + count);
-				
 				bos.write(bytes, 0, count);
+				System.out.println("read " + count);
 			}
 			
 			bos.flush();
 			bos.close();
-			
-			counter++;
-		}
+		//}
 		
 		is.close();
 		socket.close();
