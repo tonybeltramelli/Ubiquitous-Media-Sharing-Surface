@@ -3,12 +3,10 @@ package dk.itu.pervasive.mobile.socket;
 import android.os.Environment;
 import android.util.Log;
 import com.eclipsesource.json.JsonArray;
-import com.eclipsesource.json.JsonObject;
 import dk.itu.pervasive.mobile.utils.Constants;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Random;
 
 /**
  * Created by centos on 4/4/14.
@@ -21,7 +19,7 @@ public class SocketReceivingTask implements Runnable {
 
     public static final String SD_PATH = Environment.getExternalStoragePublicDirectory("Download").toString() + "/";
 
-    public SocketReceivingTask(Socket socket, RequestDelegate delegate) {
+    public SocketReceivingTask(Socket socket , RequestDelegate delegate ){
         _delegate = delegate;
         _socket = socket;
     }
@@ -29,27 +27,26 @@ public class SocketReceivingTask implements Runnable {
     @Override
     public void run() {
 
-        BufferedReader reader = tryToGetInputReader();
-        if (reader == null) {
+        BufferedReader reader = tryToGetInputStream();
+        if( reader == null ){
             //if there was an error report it and stop the thread
             _delegate.onRequestFailure();
             return;
         }
+
         //run forever and stop only when failure
-        while (true) {
+        while( true ){
             try {
                 String message = reader.readLine();
-                if (message != null){
-                    Log.i("NET" , "received new line");
+                if( message != null )
                     dispatchMessage(message);
-                }
                 else
-                    //if message is null the server closed the connection
+                    //if message is null the server closed the coonection
                     //throw exception to avoid duplication
                     throw new IOException();
             } catch (IOException e) {
                 //if anything wrong report error and return
-                Log.i("NET", "Reader task failed to read server message. Reporting failure");
+                Log.i("NET" , "Reader task failed to read server message. Reporting failure");
                 _delegate.onRequestFailure();
                 return;
             }
@@ -57,148 +54,114 @@ public class SocketReceivingTask implements Runnable {
     }
 
 
-    private BufferedReader tryToGetInputReader() {
+    private BufferedReader tryToGetInputStream(){
         BufferedReader reader = null;
         try {
             //open stream for unicode
-            reader = new BufferedReader(new InputStreamReader(
-                    _socket.getInputStream(), "UTF-16"
+            reader = new BufferedReader( new InputStreamReader(
+                    _socket.getInputStream() , "UTF-16"
             ));
         } catch (IOException e) {
-            Log.i("NET", "Reader task failed to open input stream. Reporting failure");
+            Log.i("NET" , "Reader task failed to open input stream. Reporting failure");
             return null;
         }
 
         return reader;
     }
 
-    private void dispatchMessage(String message) throws IOException { //if anything goes wrong throw exception so that it will be handled in a single point in run method
-        Log.i("NET", "Receiver received action from server : " + message);
+    private void dispatchMessage( String message ) throws IOException{ //if anything goes wrong throw exception so that it will be handled in a single point in run method
         String action = getJsonAttribute(message, Constants.Action.ACTION);
-        if( action == null )
-            return;
+        Log.i("NET" , "Receiver received action from server : " + message );
 
-        if (action.equals(Constants.Action.REQUEST) || action.equals(Constants.Action.SUCCESS)) {//asking for images or server received image.send next
-            Log.i("NET", "Handling action \"request and success\"");
+        if( action.equals(Constants.Action.REQUEST) || action.equals(Constants.Action.SUCCESS)){//asking for images or server received image.send next
+            Log.i("NET" , "Handling action \"request and success\"");
             _delegate.onRequestReceiveSuccess();
-        } else if (action.equals(Constants.Action.SEND)) {//server is sending an image.prepare to receive
-            Log.i("NET", "Handling action \"send\"");
+        }
+        else if( action.equals(Constants.Action.SEND)){//server is sending an image.prepare to receive
+            Log.i("NET" , "Handling action \"send\"");
             handleImageReceiving(message);
         }
     }
 
-    private String getJsonAttribute(String message, String attribute) {
-        JsonArray jsonArray = null;
+    private String getJsonAttribute(String message, String attribute){
+        JsonArray jsonArray = JsonArray.readFrom(message);
 
-        //do this because the server migth send a random character at the biggining
-        if ( !message.startsWith("["))
-            message = message.substring(message.indexOf("["));
-
-        try{
-          jsonArray = JsonArray.readFrom(message.trim());
-            return jsonArray.get(0).asObject()
-                    .get(attribute).asString();
-        }
-        catch (Exception e ){
-            Log.i("NET" , "received wrong json object");
-            return null;
-        }
-
+        return jsonArray.get(0).asObject()
+                .get(attribute).asString();
     }
 
 
-    private void handleImageReceiving(String message) throws IOException { //if anything goes wrong throw exception so that it will be handled in a single point in run method
-        File imageFile = null;
-        BufferedOutputStream bos = null;
-        try {
+    private void handleImageReceiving(String message)throws IOException{ //if anything goes wrong throw exception so that it will be handled in a single point in run method
 
-            imageFile = createFileInSdCard(message);
 
-            bos = new BufferedOutputStream(new FileOutputStream(imageFile));
+        String fileName = getJsonAttribute(message , Constants.NAME);
+        long fileSize = Long.parseLong( getJsonAttribute(message , Constants.SIZE));
 
-            BufferedInputStream stream = new BufferedInputStream(_socket.getInputStream());
+        Log.i("NET" , "Receiving image from server . Name : " + fileName + " size : " + fileSize);
 
-            long fileSize = Long.parseLong(getJsonAttribute(message, Constants.SIZE));
+        String fullImagePath = SD_PATH + "surface_" + fileName;
 
-            byte[] buffer = new byte[4096];
+        File imageFile = new File(fullImagePath);
+        BufferedOutputStream bos = new BufferedOutputStream( new FileOutputStream(imageFile));
+
+        InputStream is = _socket.getInputStream();
+
+        BufferedInputStream stream = new BufferedInputStream( _socket.getInputStream());
+
+        try{
+
+            int count = 0;
+            byte[] buffer = new byte[1024];
+
             int counter = 0;
-            int read = 0;
 
-            int chunks = (int)(fileSize / 4096);
-            int lastChunk =(int) (fileSize - (chunks * 4096));
+            long chunks = fileSize / 1024;
 
-            for( int i = 0 ; i < chunks ; i++ ){
-                stream.read(buffer);
+            Log.i("NET" , "Chunks " + chunks);
+
+            int lastChunk = (int)(fileSize - (chunks * 1024));
+
+            Log.i("NET" , "last " + lastChunk);
+
+            for( long i = 0 ; i < chunks ; i++ ){
+
+                is.read(buffer);
                 bos.write(buffer);
+                bos.flush();
+                counter += 1024;
             }
 
-            stream.read(buffer , 0 , lastChunk);
-            bos.write(buffer , 0 , lastChunk);
-
-            stream.skip(1);
 
 
-//            while( (counter < fileSize) && (read = stream.read(buffer , 0 , (int)Math.min(buffer.length , fileSize - counter))) > 0 ){
-//                bos.write(buffer , 0 , read );
-//                counter += read;
-//                Log.i("NET" , "data count : " + counter);
+            is.read(buffer , 0 , lastChunk);
+            bos.write(buffer,0,lastChunk);
+            counter += lastChunk;
+//
+//            while((fileSize > 0) && (count = stream.read(buffer , 0 , (int)Math.min(buffer.length , fileSize))) != -1 ){
+//
+//                bos.write(buffer, 0, count);
+//                counter += count;
+//
 //            }
 
-//            for (int read = stream.read(buffer); read != -1; read = stream.read(buffer)){
-//                bos.write(buffer, 0, read);
-//                counter += read;
-//                Log.i("NET" , "data count : " + counter);
-//            }
-
-            Log.i("NET" , "Finshed reading image");
             bos.flush();
+
+            Log.i("NET" , "received size " + counter);
             bos.close();
-
-            sendSuccessToServer();
-
-            _delegate.onReceivedImageSuccess(imageFile.getAbsolutePath());
-        } catch (Exception e) {
-            Log.i("NET", "skata");
+            _delegate.onReceivedImageSuccess(fullImagePath);
+        }
+        catch (Exception e){
             bos.close();
             imageFile.delete();
             throw new IOException();
         }
 
 
-    }
 
-    private void sendSuccessToServer() {
 
-        try {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-                    _socket.getOutputStream() , "UTF-16"
-            ));
-
-            JsonObject json = new JsonObject();
-            json.add(Constants.Action.ACTION , Constants.Action.SUCCESS);
-            String msg = "[" + json.toString() + "]\n";
-
-            writer.write(msg);
-            writer.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
 
     }
 
-
-    private File createFileInSdCard( String message ){
-
-        String fileName = getJsonAttribute(message, Constants.NAME);
-        long fileSize = Long.parseLong(getJsonAttribute(message, Constants.SIZE));
-
-        Log.i("NET", "Receiving image from server . Name : " + fileName + " size : " + fileSize);
-
-        String fullImagePath = SD_PATH + new Random().nextInt() + fileName;
-
-        return new File(fullImagePath);
-    }
 
 }

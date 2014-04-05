@@ -8,6 +8,10 @@ import dk.itu.pervasive.mobile.utils.Constants;
 import dk.itu.pervasive.mobile.utils.UString;
 import dk.itu.pervasive.mobile.utils.dataStructure.URLInformation;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
@@ -33,17 +37,19 @@ public class SocketCreatingTask extends AsyncTask<String, Void, Socket> {
     private Socket _createSocket() {
         try {
             URLInformation urlInformation = UString.getUrlInformation(DataManager.getInstance().getSurfaceAddress());
+            if(urlInformation == null) return null;
+            
             _socket = new Socket() ;
             //try to connect with timeout
             _socket.connect(new InetSocketAddress(urlInformation.getIp() , urlInformation.getPort()) , 2000);
             _socket.setKeepAlive(false);
-
+            
             //write json in unicode format
             OutputStreamWriter os = new OutputStreamWriter(_socket.getOutputStream(), "UTF-16");
 
             os.write(getInitMessage());
             os.flush();
-
+            
             _statusFlag = true;
 
             Log.i("NET", "Create task succeded to create connection");
