@@ -1,8 +1,12 @@
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -34,12 +38,18 @@ public class Server
 			System.out.println("Can't accept client connection. ");
 		}
 		
+		BufferedReader stream = new BufferedReader(new InputStreamReader(socket.getInputStream() , "UTF-16"));
+
+		stream.readLine();
+		
 		try
 		{
+			Thread.sleep(1000);
+			
 			is = socket.getInputStream();
 			bufferSize = socket.getReceiveBufferSize();
 			System.out.println("Buffer size: " + bufferSize);
-		} catch (IOException ex)
+		} catch (Exception ex)
 		{
 			System.out.println("Can't get socket input stream. ");
 		}	
@@ -67,6 +77,19 @@ public class Server
 				bos.write(bytes, 0, count);
 				System.out.println("read " + count);
 			}
+			
+			/*
+			try
+			{
+				String msg = "[{\"action\":\"1\"}]\n";
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-16"));
+				
+				writer.write(msg);
+				writer.flush();
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}*/
 			
 			bos.flush();
 			bos.close();

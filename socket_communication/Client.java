@@ -11,7 +11,7 @@ public class Client
         Socket socket = null;
         String host = "127.0.0.1";
 
-        socket = new Socket(host, 4444);
+        socket = new Socket(host, 2500);
 
         File file = new File("input.jpg");
         
