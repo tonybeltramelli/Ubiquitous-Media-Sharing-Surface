@@ -22,11 +22,11 @@ namespace surface_app
     /// </summary>
     public partial class MainWindow : SurfaceWindow
     {
-        public ScatterView scatterImages;
+        public ScatterView scatter;
 
         private Gallery gallery;
 
-        private ObservableCollection<dk.itu.spct.Image> images;
+        private ObservableCollection<string> images;
 
         private const int DragThreshold = 15;
         
@@ -45,24 +45,12 @@ namespace surface_app
             // Add handlers for window availability events.
             AddWindowAvailabilityHandlers();
 
-            //Add Images into Sctter View 
-            // scatter.ItemsSource = System.IO.Directory.GetFiles(@"C:\Users\Public\Pictures\Sample Pictures", "*.jpg");
-            
-
-            //System.Threading.Thread.Sleep(1000);
 
             TestImage testImg = new TestImage("\\Resources\\Koala.jpg", "tag");
-            //images.Add(System.IO.Directory.GetFiles(@"C:\Users\Public\Pictures\Sample Pictures", "Koala.jpg"));
+            images = new ObservableCollection<string>();
+            images.Add("\\Resources\\Koala.jpg");
 
-            // scatterImages.ItemsSource = System.IO.Directory.GetFiles(@"C:\Users\Public\Pictures\Sample Pictures", "Koala.jpg"); // images; //Gallery.Instance.Images;
-            
-            
-            // BitmapImage img = new BitmapImage(new Uri("\\Resources\\Koala.jpg", UriKind.Relative));
-            // System.Windows.Controls.Image img = new System.Windows.Controls.Image();
-            // img.Source = new Bitmap(new Uri("\\Resources\\Koala.jpg", UriKind.Relative));
-            // dk.itu.spct.Image testImg = new dk.itu.spct.Image("Koala.jsp", img);
-            // Gallery.Instance.AddImage("");
-
+            scatter.ItemsSource = "/Resources"; //Gallery.Instance.Images;
         }
 
         /// <summary>
@@ -196,7 +184,7 @@ namespace surface_app
             // If this is a touch device whose state has been initialized when its down event happens
             if (InputDeviceHelper.GetDragSource(e.Device) != null)
             {
-                StartDragDrop(PhonePin, e);
+                StartDragDrop(scatter, e);
             }
         }
 
@@ -234,7 +222,7 @@ namespace surface_app
             // If this is a mouse whose state has been initialized when its down event happens
             if (InputDeviceHelper.GetDragSource(e.Device) != null)
             {
-                StartDragDrop(PhonePin, e);
+                StartDragDrop(scatter, e);
             }
         }
 
@@ -269,19 +257,19 @@ namespace surface_app
 
         private void ResetListBoxItem(XmlElement itemData)
         {
-            SurfaceListBoxItem sourceListBoxItem = null;
-            foreach (object item in PhonePin.Items)
-            {
-                if (((XmlElement)item).OuterXml == itemData.OuterXml)
-                {
-                    sourceListBoxItem = PhonePin.ItemContainerGenerator.ContainerFromItem(item) as SurfaceListBoxItem;
-                }
-            }
+            //SurfaceListBoxItem sourceListBoxItem = null;
+            //foreach (object item in scatter.)
+            //{
+            //    if (((XmlElement)item).OuterXml == itemData.OuterXml)
+            //    {
+            //        sourceListBoxItem = PhonePin.ItemContainerGenerator.ContainerFromItem(item) as SurfaceListBoxItem;
+            //    }
+            //}
 
-            if (sourceListBoxItem != null)
-            {
-                sourceListBoxItem.Opacity = 1.0;
-            }
+            //if (sourceListBoxItem != null)
+            //{
+            //    sourceListBoxItem.Opacity = 1.0;
+            //}
         }
 
         /// <summary>
@@ -289,7 +277,7 @@ namespace surface_app
         /// </summary>
         /// <param name="sourceListBox"></param>
         /// <param name="e"></param>
-        private void StartDragDrop(ListBox sourceListBox, InputEventArgs e)
+        private void StartDragDrop(ScatterView sourceListBox, InputEventArgs e)
         {
             // Check whether the input device is in the ignore list.
             if (ignoredDeviceList.Contains(e.Device))
@@ -352,7 +340,7 @@ namespace surface_app
                 devices = new List<InputDevice>(new InputDevice[] { e.Device });
             }
 
-            SurfaceDragCursor cursor = SurfaceDragDrop.BeginDragDrop(PhonePin, draggedListBoxItem, cursorVisual, data, devices, DragDropEffects.Copy);
+            SurfaceDragCursor cursor = SurfaceDragDrop.BeginDragDrop(scatter, draggedListBoxItem, cursorVisual, data, devices, DragDropEffects.Copy);
 
             if (cursor == null)
             {
@@ -412,8 +400,74 @@ namespace surface_app
 #endregion
 
 
+        #region RemovePhonePin
+
+        public static readonly RoutedUICommand RemovePhonePin =
+            new RoutedUICommand("_Checkout", "Checkout", typeof(MainWindow), null);
+
+        /// <summary>
+        /// Execute the Checkout command.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="args"></param>
+        private static void OnExecuteCheckoutCommand(object target, ExecutedRoutedEventArgs args)
+        {
+            MainWindow mainWindow = target as MainWindow;
+            ScatterViewItem sourceCommandItem = args.Source as ScatterViewItem;
+
+            if (mainWindow == null || sourceCommandItem == null)
+            {
+                return;
+            }
+
+            mainWindow.ScatterLayer.Items.Remove(sourceCommandItem);
+
+            if (!areTagsSupported)
+            {
+                // DEVELOPER: In this case, tags aren't supported. If you are truly using identity validation,
+                // you probably want to take another course of action here. For the purposes of this sample,
+                // we'll just skip validation and allow shopping/checkout.
+                mainWindow.OnIdentityValidated(null, null);
+            }
+        }
+
+        #endregion
+
     } // END MainWindow
 
+    
+    
+    /// <summary>
+    /// Template selector class for the items in the ShoppingList.
+    /// </summary>
+    public class ShoppingListTemplateSelector : DataTemplateSelector
+    {
+        /// <summary>
+        /// Template for the item selected as the starting item.
+        /// </summary>
+        public DataTemplate StartingItemTemplate { get; set; }
+
+        /// <summary>
+        /// Template for items that are not the starting item.
+        /// </summary>
+        public DataTemplate NormalItemTemplate { get; set; }
+
+        /// <summary>
+        /// Selects data templates for items in the ShoppingList.
+        /// If an item has the content of "Age of Empires 3", which is the first item in the item list, the StartingItemTemplate will be used.
+        /// Otherwise, the NormalItemTemplate will be used.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            XmlElement data = item as XmlElement;
+            return (data != null && data.GetAttribute("Name") == "Age Of Empires 3") ? StartingItemTemplate : NormalItemTemplate;
+        }
+    }
+
+    
     public class TestImage
     {
         private string path;

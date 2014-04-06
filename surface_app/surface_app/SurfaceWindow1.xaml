@@ -6,24 +6,229 @@
     xmlns:local="clr-namespace:surface_app"
     Title="Surface Application"
     >
+    
+    <s:SurfaceWindow.Resources>
+        <!-- ShoppingList content -->
+        <XmlDataProvider x:Key="ShoppingListData" XPath="Root">
+            <x:XData>
+                <Root xmlns="">
+                    <Entry Name="Age Of Empires 3" Image="\Resources\icon.png" />
+                    <Entry Name="Age of Empires 3: The War Chiefs" Image="\Resources\Koala.jpg" />
+                </Root>
+            </x:XData>
+        </XmlDataProvider>
+
+        <!-- List Style -->
+        <Style x:Key="ImageGalleryStyle" TargetType="{x:Type s:SurfaceListBox }">
+            <Setter Property="Background" Value="{DynamicResource {x:Static s:SurfaceColors.ListBoxItemBackgroundBrushKey}}" />
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="Height" Value="234" />
+            <Setter Property="ItemTemplateSelector">
+                <Setter.Value>
+                    <sc:ShoppingListTemplateSelector>
+                        <sc:ShoppingListTemplateSelector.NormalItemTemplate>
+                            <DataTemplate>
+                                <StackPanel RenderTransformOrigin="0.5, 0.5"                                
+                               Margin="7,0,0,0" 
+                               MinWidth="171" MaxWidth="171"                                
+                               MinHeight="235" MaxHeight="235">
+                                    <Image Margin="14,21,21,11" Source="{Binding XPath=@Image}" 
+                            Height="149" Width="101" />
+                                    <TextBlock Text="{Binding XPath=@Name}" 
+                             MaxWidth="116"
+                             FontSize="12"                 
+                             Margin="21,0,21,21"
+                             FontFamily="Segoe360" 
+                             TextAlignment="Center"
+                             TextWrapping="Wrap"
+                             Foreground="{DynamicResource {x:Static s:SurfaceColors.ListBoxItemForegroundBrushKey}}"  
+                             HorizontalAlignment="Center" />
+                                </StackPanel>
+
+                            </DataTemplate>
+                        </sc:ShoppingListTemplateSelector.NormalItemTemplate>
+                        <sc:ShoppingListTemplateSelector.StartingItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="17, 0, 0, -14">
+                                    <StackPanel RenderTransformOrigin="0.5, 0.5" 
+                                Margin="7,0,0,0" 
+                                MinWidth="171" MaxWidth="171" 
+                                MinHeight="235" MaxHeight="235">
+                                        <Image Margin="14,21,21,11" 
+                           Source="{Binding XPath=@Image}" 
+                           Height="149" 
+                           Width="101" />
+                                        <TextBlock Text="{Binding XPath=@Name}" 
+                            MaxWidth="116"
+                            FontSize="12"          
+                            Margin="21,0,21,21"
+                            FontFamily="Segoe360" 
+                            TextAlignment="Center"
+                            TextWrapping="Wrap"
+                            Foreground="{DynamicResource {x:Static s:SurfaceColors.ListBoxItemForegroundBrushKey}}"  
+                            HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                    <Rectangle Fill="{DynamicResource {x:Static s:SurfaceColors.SurfaceWindowBackgroundBrushKey}}" 
+                               Width="17" HorizontalAlignment="Left" Margin="-26,-2.5,0,3" />
+                                </Grid>
+                            </DataTemplate>
+                        </sc:ShoppingListTemplateSelector.StartingItemTemplate>
+                    </sc:ShoppingListTemplateSelector>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <s:SurfaceScrollViewer Background="{TemplateBinding Background}" 
+                                   VerticalScrollBarVisibility="Disabled" 
+                                   HorizontalScrollBarVisibility="Hidden" 
+                                   CanContentScroll="True">
+                        </s:SurfaceScrollViewer>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Style for ListBoxItems-->
+        <Style TargetType="{x:Type s:SurfaceListBoxItem}">
+            <Setter Property="Margin" Value="1.5" />
+            <Setter Property="Background" Value="#33CCCCCC" />
+        </Style>
+
+        <!-- Base style used by LibraryStackItem in LibraryStack and ScatterViewItem in ScatterLayer. -->
+        <Style x:Key="BaseItemStyle" TargetType="{x:Type ContentControl}">
+            <Setter Property="MaxHeight" Value="259" />
+            <Setter Property="MinHeight" Value="130" />
+            <Setter Property="MaxWidth" Value="182" />
+            <Setter Property="MinWidth" Value="91" />
+        </Style>
+
+        <!--Style for each data item on ScatterLayer and the cursor being dragged -->
+        <Style x:Key="ScatterItemStyle" BasedOn="{StaticResource BaseItemStyle}" TargetType="{x:Type s:ScatterViewItem}">
+            <Setter Property="Width" Value="91" />
+            <Setter Property="Height" Value="130" />
+            <Setter Property="Background" Value="{x:Null}" />
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <Image Source="{Binding XPath=@Image}" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Style for the LibraryStack. -->
+        <Style TargetType="{x:Type s:LibraryStack}">
+            <Setter Property="Width" Value="308" />
+            <Setter Property="Height" Value="308" />
+            <Setter Property="MaxWidth" Value="308" />
+            <Setter Property="MinWidth" Value="173" />
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style BasedOn="{StaticResource BaseItemStyle}" TargetType="{x:Type s:LibraryStackItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type s:LibraryStackItem}">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <Image Source="{Binding XPath=@Image}" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Style for the ScatterViewItem which hosts the LibraryStack. -->
+        <Style x:Key="StackScatterViewItemStyle" BasedOn="{StaticResource LibraryControlInScatterViewItemContentStyle}" TargetType="{x:Type s:ScatterViewItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type s:ScatterViewItem}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="4*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="4*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter Grid.ColumnSpan="3" Grid.RowSpan="2" />
+                            <Viewbox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                                <s:SurfaceButton Width="120" Command="{x:Static sc:MainWindow.RemovePhonePin}" Margin="9, 17, 9, 9">
+                                    Checkout
+                                </s:SurfaceButton>
+                            </Viewbox>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--DEVELOPER: Remove this animation and triggers after tags have been assigned-->
+        <Storyboard x:Key="TagInfoText" SpeedRatio=".2">
+            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="TagInfoText" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00.4000000" Value="1" />
+                <SplineDoubleKeyFrame KeyTime="00:00:01.7000000" Value="1" />
+                <SplineDoubleKeyFrame KeyTime="00:00:02" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <!--Tag Information Text Style for RichTextBox-->
+        <Style x:Key="TagInfoTextStyle" TargetType="{x:Type RichTextBox}">
+            <Setter Property="Background" Value="{x:Null}" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="BorderThickness" Value="0,0,0,0" />
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static s:SurfaceColors.ControlForegroundBrushKey}}" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Margin" Value="0,0,0,43" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontFamily" Value="Segoe360" />
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="Focusable" Value="False" />
+        </Style>
+
+    </s:SurfaceWindow.Resources>
+    
+    
   <Grid>
-        <s:ScatterView Name="scatterImges" Margin="138,0,0,0">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="68" />
+        </Grid.RowDefinitions>
+
+
+
+        <s:ScatterView Name="ImageGallery" Margin="138,0,0,0">
             <s:ScatterView.ItemTemplate>
                 <DataTemplate>
-                    <Image Source="{Binding}"/>
-                </DataTemplate>
-            </s:ScatterView.ItemTemplate>
-        </s:ScatterView>
-
-        <s:SurfaceListBox x:Name="PhonePin" Grid.Row="1" 
+                    <Image Source="{Binding}"
                       s:SurfaceDragDrop.DragCompleted="OnImageDragCompleted"
                       s:SurfaceDragDrop.DragCanceled="OnImageDragCanceled" 
                       PreviewMouseLeftButtonDown="OnImagePreviewMouseLeftButtonDown" 
                       PreviewMouseMove="OnImagePreviewMouseMove" 
                       PreviewMouseLeftButtonUp="OnImagePreviewMouseLeftButtonUp" 
+                      Style="{StaticResource ImageGalleryStyle}" 
                       PreviewTouchDown="OnImagePreviewTouchDown" 
                       PreviewTouchMove="OnImagePreviewTouchMove" 
-                      PreviewTouchUp="OnImagePreviewTouchUp" />
+                      PreviewTouchUp="OnImagePreviewTouchUp" 
+                    />
+                </DataTemplate>
+            </s:ScatterView.ItemTemplate>
+        </s:ScatterView>
+
 
         <s:TagVisualizer VisualizationAdded="OnVisualizationAdded" Grid.RowSpan="1">
             <s:TagVisualizer.Definitions>
@@ -35,8 +240,7 @@
                                       Value="0xC0" />
             </s:TagVisualizer.Definitions>
 
-            <local:DragDropScatterView x:Name="ScatterLayer" Background="Transparent" />
+            <local:DragDropScatterView x:Name="ScatterLayer" Background="Transparent" ItemContainerStyle="{StaticResource ScatterItemStyle}" />
         </s:TagVisualizer>
-      
     </Grid>
 </s:SurfaceWindow>
