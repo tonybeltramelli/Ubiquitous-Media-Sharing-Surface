@@ -18,8 +18,10 @@ public class UString
 	{
 		if(rawUrl == null || rawUrl == "") return null;
 		
-		String ip = rawUrl.substring(0, rawUrl.indexOf(":"));
-		int port = Integer.valueOf(rawUrl.substring(rawUrl.indexOf(":") + 1, rawUrl.indexOf("/") != -1 ? rawUrl.indexOf("/") : rawUrl.length()));
+		boolean isAPort = rawUrl.indexOf(":") != -1;
+		
+		String ip = rawUrl.substring(0, isAPort ? rawUrl.indexOf(":") : rawUrl.length());
+		int port = isAPort ? Integer.valueOf(rawUrl.substring(rawUrl.indexOf(":") + 1, rawUrl.indexOf("/") != -1 ? rawUrl.indexOf("/") : rawUrl.length())) : 0;
 		
 		return new URLInformation(ip, port);
 	}

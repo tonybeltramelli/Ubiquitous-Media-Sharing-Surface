@@ -6,6 +6,9 @@
     <string name="preference_surface_address">Surface address</string>
     <string name="preference_sticker_id">Sticker ID</string>
     <string name="preference_save">Save</string>
+    <string name="preference_user_name_default">username</string>
+    <string name="preference_surface_address_default">192.168.10.1:5555</string>
+    <string name="preference_sticker_id_default">1</string>
     <string name="home_text">Please place the phone on the surface.</string>
     <string name="tcp_service_started">TCP service started</string>
     <string name="tcp_service_stopped">TCP service stopped</string>

@@ -2,6 +2,8 @@ package dk.itu.pervasive.mobile.data;
 
 import java.io.FileOutputStream;
 
+import dk.itu.pervasive.mobile.R;
+
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -43,10 +45,9 @@ public class DataManager
 	
 	public void saveData()
 	{
-		_username = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_USERNAME, "");
-		_surfaceAddress = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_SURFACE_ADDRESS,
-				"");
-		_stickerID = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_STICKER_ID, "");
+		_username = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_USERNAME, _context.getResources().getString(R.string.preference_user_name_default));
+		_surfaceAddress = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_SURFACE_ADDRESS, _context.getResources().getString(R.string.preference_surface_address_default));
+		_stickerID = PreferenceManager.getDefaultSharedPreferences(_context).getString(PREF_KEY_STICKER_ID, _context.getResources().getString(R.string.preference_sticker_id_default));
 		
 		Log.wtf("save data", _username + ", " + _surfaceAddress + ", " + _stickerID);
 	}
