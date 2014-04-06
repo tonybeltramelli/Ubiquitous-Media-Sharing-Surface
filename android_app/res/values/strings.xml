@@ -14,5 +14,8 @@
     <string name="tcp_service_stopped">TCP service stopped</string>
     <string name="tcp_service_connected">TCP service connected</string>
     <string name="tcp_service_disconnected">TCP service disconnected</string>
-
+    <string name="message_image_send_to_surface">Image {N} send to surface.</string>
+    <string name="message_image_sended_to_surface_success">Image sent with success.</string>
+	<string name="message_image_received_from_surface_success">Image received from surface with success.</string>
+    
 </resources>

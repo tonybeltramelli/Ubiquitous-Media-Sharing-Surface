@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.activity.MainActivity;
+import dk.itu.pervasive.mobile.data.DataManager;
 import dk.itu.pervasive.mobile.gallery2.ImageManager2;
 import dk.itu.pervasive.mobile.socket.RequestDelegate;
 import dk.itu.pervasive.mobile.socket.SocketCreatingTask;
@@ -96,8 +97,7 @@ public class TCPService extends Service implements RequestDelegate
 	@Override
 	public void onRequestSendSuccess()
 	{
-		//in receive success instead
-		//onRequestReceiveSuccess();
+		DataManager.getInstance().displayMessage(getResources().getString(R.string.message_image_sended_to_surface_success));
 	}
 	
 	@Override
@@ -108,9 +108,6 @@ public class TCPService extends Service implements RequestDelegate
 		// to send images
 		SocketReceivingTask task = new SocketReceivingTask(_socket, this);
 		new Thread(task).start();
-		
-		//TODO remove
-		//onRequestReceiveSuccess();
 	}
 	
 	@Override
@@ -129,6 +126,11 @@ public class TCPService extends Service implements RequestDelegate
 		
 		SocketSendingTask socketTask = new SocketSendingTask(this, _socket);
 		socketTask.execute(_imagePaths.get(_imageIndex));
+		
+		String message = this.getResources().getString(R.string.message_image_send_to_surface);
+		message = message.replace("{N}", String.valueOf(_imageIndex + 1));
+		
+		DataManager.getInstance().displayMessage(message);
 	}
 	
 	@Override
@@ -150,5 +152,7 @@ public class TCPService extends Service implements RequestDelegate
 	public void onReceivedImageSuccess(String path)
 	{
 		ImageManager2.getInstance().insertImageToGallery(path);
+		
+		DataManager.getInstance().displayMessage(getResources().getString(R.string.message_image_received_from_surface_success));
 	}
 }

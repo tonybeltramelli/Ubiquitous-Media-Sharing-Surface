@@ -2,8 +2,6 @@ package dk.itu.pervasive.mobile.data;
 
 import java.io.FileOutputStream;
 
-import dk.itu.pervasive.mobile.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,6 +9,8 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.Toast;
+import dk.itu.pervasive.mobile.R;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -75,6 +75,15 @@ public class DataManager
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void displayMessage(final String message)
+	{
+		_context.runOnUiThread(new Runnable() {
+		    public void run() {
+		        Toast.makeText(_context, message, Toast.LENGTH_SHORT).show();
+		    }
+		});
 	}
 	
 	public String getUsername()

@@ -46,7 +46,6 @@ public class SocketReceivingTask implements Runnable {
             try {
                 String message = reader.readLine();
                 if (message != null) {
-                    Log.i("NET", "received new line");
                     dispatchMessage(message);
                 } else
                     //if message is null the server closed the connection
