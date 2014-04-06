@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Net;
 using System.Text;
 using System.Threading;
 
@@ -11,9 +12,11 @@ namespace dk.itu.spct.tcp
     {
         public string text;
         public byte[] data;
+        public bool active;
 
         public Message(String l_text) {
             text = l_text;
+            active = true;
         }
     }
 
@@ -98,7 +101,7 @@ namespace dk.itu.spct.tcp
                         bytes = networkStream.Read(buffer, 0, buffer.Length);
                         memStream.Write(buffer, 0, bytes);
                         bytesRead += bytes;
-                    } 
+                    }
                     return memStream.ToArray();
                 }
             }
@@ -118,23 +121,34 @@ namespace dk.itu.spct.tcp
                     NetworkStream networkStream = m_socket.GetStream();
                     Message message = messagesToSend[0];
                     try {
-                        if (!String.IsNullOrEmpty(message.text)) {
-                            StreamWriter streamWriter = new StreamWriter(networkStream);
-                            streamWriter.WriteLine(message.text);
-                            streamWriter.Flush();
+                        if (message.active) {
+                            message.active = false;
+                            if (!String.IsNullOrEmpty(message.text)) {
+                                StreamWriter streamWriter = new StreamWriter(networkStream, m_encoding);
+                                streamWriter.WriteLine(message.text);
+                                streamWriter.Flush();
 
-                            if (message.data != null) {
-                                System.Threading.Thread.Sleep(1000);
-                                waitForSuccess = true;
-                                networkStream.Write(message.data, 0, message.data.Length);
+                                if (message.data != null) {
+                                    Console.WriteLine("Sending image...");
+                                    waitForSuccess = true;
+                                    TcpListener imglistener = new TcpListener(IPAddress.Any, TcpServer.Port + 1);
+                                    imglistener.Start(1);
+                                    TcpClient imgSocket = imglistener.AcceptTcpClient();
+                                    NetworkStream ns = imgSocket.GetStream();
+                                    ns.Write(message.data, 0, message.data.Length);
+                                    ns.Flush();
+                                    imglistener.Stop();
+                                    imgSocket.Close();
+                                }
+                            }
+
+                            lock (messagesToSend) {
+                                messagesToSend.RemoveAt(0);
                             }
                         }
-
-                        lock (messagesToSend) {
-                            messagesToSend.RemoveAt(0);
-                        }
-                    } catch (ObjectDisposedException) {
+                    } catch (ObjectDisposedException e) {
                         m_socket.Close();
+                        Console.WriteLine(e.Message);
                     }
                 }
             }
