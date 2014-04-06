@@ -113,7 +113,7 @@ namespace dk.itu.spct.tcp
             }
         }
         //Send image to specific device
-        public void SendImage(int tag_id, Image img) {
+        public void SendImage(int tag_id, ImageObject img) {
             foreach (TcpServerConnection conn in connections) {
                 if (conn.Id == tag_id){
                     TCPCommand command = new TCPCommand();

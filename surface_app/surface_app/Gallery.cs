@@ -3,21 +3,24 @@ using System.Drawing;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Media.Imaging;
+using System.Windows;
+using System.IO;
+using System.Drawing.Imaging;
+using System.Windows.Threading;
 
 namespace dk.itu.spct
 {
     //Gallery representation
     public class Gallery{
 
-        private ObservableCollection<Image> images;
+        private ObservableCollection<ImageObject> images;
 
         //Get-Set
-        public ObservableCollection<Image> Images
+        public ObservableCollection<ImageObject> Images
         {
             get {
-                lock (images) {
-                    return new ObservableCollection<Image>(images); 
-                }
+                    return images; 
             }
         }
 
@@ -37,10 +40,10 @@ namespace dk.itu.spct
         
         //Setup gallery
         private void initialize() {
-            images = new ObservableCollection<Image>();
+            images = new ObservableCollection<ImageObject>();
         }
         //Add image
-        public void AddImage(Image img) {
+        public void AddImage(ImageObject img) {
             lock (images) {
                 images.Add(img);
             }
@@ -48,7 +51,7 @@ namespace dk.itu.spct
         //Remove owner from images
         public void removeDevice(int tag_id){
             lock (images) {
-                foreach (Image img in images) {
+                foreach (ImageObject img in images) {
                     if (img.RemoveOwner(tag_id) == 0) {
                         images.Remove(img);
                     }
@@ -62,7 +65,7 @@ namespace dk.itu.spct
     }
     
     //Image representation
-    public class Image{
+    public class ImageObject{
 
         private string m_file_name;
         private Bitmap m_bitmap;
@@ -80,6 +83,13 @@ namespace dk.itu.spct
                 return m_bitmap;
             }
         }
+        public BitmapSource BitmapSource
+        {
+            get{
+                return Imaging.CreateBitmapSourceFromBitmap(m_bitmap);
+            }
+        }
+
         public HashSet<int> Owners {
             get {
                 return owners;
@@ -87,7 +97,7 @@ namespace dk.itu.spct
         }
 
         //Create image <Image file name, data as string>
-        public Image(string file_name, byte[] data) {
+        public ImageObject(string file_name, byte[] data) {
             if (!String.IsNullOrEmpty(file_name) && data.Length > 0){
                 initialize();
                 m_file_name = file_name;
@@ -95,7 +105,7 @@ namespace dk.itu.spct
             }
         }
 
-        public Image(string fileName, Bitmap bitMap)
+        public ImageObject(string fileName, Bitmap bitMap)
         {
             initialize();
             m_file_name = fileName;
@@ -132,4 +142,20 @@ namespace dk.itu.spct
             return (Bitmap)tc.ConvertFrom(data);
         }
     }
+
+    public static class Imaging
+    {
+        public static BitmapSource CreateBitmapSourceFromBitmap(Bitmap bitmap)
+        {
+            if (bitmap == null)
+                throw new ArgumentNullException("bitmap");
+
+            return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                bitmap.GetHbitmap(),
+                IntPtr.Zero,
+                Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions());
+        }
+    }
+
 }

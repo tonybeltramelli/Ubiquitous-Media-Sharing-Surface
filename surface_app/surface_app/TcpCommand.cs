@@ -53,7 +53,7 @@ namespace dk.itu.spct.tcp
 
                         byte[] data = conn.processImage(image_size);
 
-                        Image img = new Image(file_name, data);
+                        ImageObject img = new ImageObject(file_name, data);
                         img.AddOwner(conn.Id);
                         gallery.AddImage(img);
 
@@ -81,7 +81,7 @@ namespace dk.itu.spct.tcp
         }
         //Generate JSON object from text
         //[{'action':'3'},{'file_name':'image1','data':'image1'}]
-        public void sendImage(TcpServerConnection conn, int tag_id, Image img) {
+        public void sendImage(TcpServerConnection conn, int tag_id, ImageObject img) {
             foreach (int owner in img.Owners) {
                 if (owner == tag_id) { return; }
             }
