@@ -23,6 +23,8 @@ public class SocketReceivingTask implements Runnable {
 
     RequestDelegate _delegate;
 
+    private static final int BUFFER_SIZE = 8192;
+
     public static final String SD_PATH = Environment.getExternalStoragePublicDirectory("Download").toString() + "/";
 
     public SocketReceivingTask(Socket socket, RequestDelegate delegate) {
@@ -58,7 +60,6 @@ public class SocketReceivingTask implements Runnable {
             }
         }
     }
-
 
     private BufferedReader tryToGetInputReader() {
         BufferedReader reader = null;
@@ -108,68 +109,51 @@ public class SocketReceivingTask implements Runnable {
 
     }
 
-
     private void newHandleImageReceiving(String message) {
+        File imageFile = createFileInSdCard(message);
+        //could not create file in the sdcard return
+        if (imageFile == null)
+            return;
 
+        Socket socket = createImageReceivingSocket();
+        if (socket == null)
+            return;
 
-        File imageFile = null;
-        imageFile = createFileInSdCard(message);
-        BufferedOutputStream bos = null;
-        Socket receiveSocket = null;
-        BufferedInputStream stream = null;
+        BufferedInputStream inputStream;
+        BufferedOutputStream outputStream = null;
         try {
-            URLInformation urlInformation = UString.getUrlInformation(DataManager.getInstance().getSurfaceAddress());
-            receiveSocket = new Socket();
-            //connect to the server port + 1
-            try {
+            inputStream = new BufferedInputStream(socket.getInputStream());
+            outputStream = new BufferedOutputStream(new FileOutputStream(imageFile));
 
-                receiveSocket.connect(new InetSocketAddress(urlInformation.getIp(), urlInformation.getPort() + 1), 1000);
-            } catch (Exception e) {
-                Log.i("NET", "cannot connect");
+            byte[] buffer = new byte[BUFFER_SIZE];
+
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
             }
-
-
-            stream = new BufferedInputStream(receiveSocket.getInputStream());
-            bos = new BufferedOutputStream(new FileOutputStream(imageFile));
-
-            byte[] buffer = new byte[4096];
-
-            int read = 0;
-            try {
-                while ((read = stream.read(buffer)) != -1) {
-                    bos.write(buffer, 0, read);
-                }
-
-            } catch (Exception e) {
-                Log.i("NET", "cannot read");
-            }
-
-            bos.flush();
-            bos.close();
+            outputStream.flush();
+            outputStream.close();
 
 //            if (imageFile.length() > 0)
-                _delegate.onReceivedImageSuccess(imageFile.getAbsolutePath());
+//                _delegate.onReceivedImageSuccess(imageFile.getAbsolutePath());
 //            else
 //                imageFile.delete();
 
-            stream.close();
-
+            _delegate.onReceivedImageSuccess(imageFile.getAbsolutePath());
             sendSuccessToServer();
-
-
-            receiveSocket.close();
+            socket.close();
         } catch (Exception e) {
-            Log.i("NET", "skata skata");
-            if (!receiveSocket.isClosed())
-                try {
-                    receiveSocket.close();
-                } catch (IOException e1) {
-                }
-
+            Log.i("NET", "There was an error while reading the image from the server");
+            try {
+                outputStream.close();
+                if (!socket.isClosed())
+                    socket.close();
+            } catch (IOException e1) {
+            }
+            imageFile.delete();
         }
 
     }
-
 
     private void handleImageReceiving(String message) throws IOException { //if anything goes wrong throw exception so that it will be handled in a single point in run method
         File imageFile = null;
@@ -244,23 +228,39 @@ public class SocketReceivingTask implements Runnable {
             writer.flush();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.i("NET", "Cound not send success to server");
         }
 
 
     }
 
-
     private File createFileInSdCard(String message) {
 
-        String fileName = getJsonAttribute(message, Constants.NAME);
-        long fileSize = Long.parseLong(getJsonAttribute(message, Constants.SIZE));
+        try {
+            String fileName = getJsonAttribute(message, Constants.NAME);
 
-        Log.i("NET", "Receiving image from server . Name : " + fileName + " size : " + fileSize);
+            String fullImagePath = SD_PATH + new Random().nextInt() + fileName;
 
-        String fullImagePath = SD_PATH + new Random().nextInt() + fileName;
+            Log.i("NET", "Created file in the sd card : " + fullImagePath);
 
-        return new File(fullImagePath);
+            return new File(fullImagePath);
+        } catch (Exception e) {
+            Log.i("NET", "There was an error creating the file in the sd card. returning Null");
+            return null;
+        }
     }
 
+    private Socket createImageReceivingSocket() {
+        URLInformation urlInformation = UString.getUrlInformation(DataManager.getInstance().getSurfaceAddress());
+
+        Socket socket = new Socket();
+        //connect to the server port + 1
+        try {
+            socket.connect(new InetSocketAddress(urlInformation.getIp(), urlInformation.getPort() + 1), 1000);
+            return socket;
+        } catch (IOException e) {
+            Log.i("NET", "Could not connect to the server to receive image. aborting");
+            return null;
+        }
+    }
 }
