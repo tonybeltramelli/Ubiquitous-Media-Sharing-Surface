@@ -14,7 +14,7 @@ import dk.itu.pervasive.mobile.gallery2.ImageManager2;
 public class MainActivity extends APrefActivity implements GalleryFragment2.ServiceCallbacks
 {
 
-    private static boolean isInitialized = false;
+    private boolean isInitialized = false;
 
 
 	@Override
@@ -31,6 +31,13 @@ public class MainActivity extends APrefActivity implements GalleryFragment2.Serv
 	protected void onResume()
 	{
 		super.onResume();
+	}
+	
+	@Override
+	protected void onStop()
+	{
+		_unbindService();
+		super.onStop();
 	}
 	
 	@Override

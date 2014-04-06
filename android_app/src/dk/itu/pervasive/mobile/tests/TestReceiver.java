@@ -1,4 +1,4 @@
-package dk.itu.pervasive.mobile;
+package dk.itu.pervasive.mobile.tests;
 
 import java.io.*;
 import java.net.Socket;
