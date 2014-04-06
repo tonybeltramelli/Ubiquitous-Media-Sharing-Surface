@@ -1,4 +1,4 @@
-package dk.itu.pervasive.mobile;
+package dk.itu.pervasive.mobile.tests;
 
 import com.eclipsesource.json.JsonObject;
 import dk.itu.pervasive.mobile.utils.Constants;

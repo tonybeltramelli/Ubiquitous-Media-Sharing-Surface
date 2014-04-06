@@ -1,5 +1,9 @@
 package dk.itu.pervasive.mobile.service;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.util.List;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,10 +19,6 @@ import dk.itu.pervasive.mobile.socket.RequestDelegate;
 import dk.itu.pervasive.mobile.socket.SocketCreatingTask;
 import dk.itu.pervasive.mobile.socket.SocketReceivingTask;
 import dk.itu.pervasive.mobile.socket.SocketSendingTask;
-
-import java.io.IOException;
-import java.net.Socket;
-import java.util.List;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -66,6 +66,15 @@ public class TCPService extends Service implements RequestDelegate
 	@Override
 	public void onDestroy()
 	{
+		_notificationManager.cancel(NOTIFICATION);
+		try
+		{
+			if(_socket != null) _socket.close();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 		Toast.makeText(this, R.string.tcp_service_stopped, Toast.LENGTH_SHORT).show();
 	}
 	
