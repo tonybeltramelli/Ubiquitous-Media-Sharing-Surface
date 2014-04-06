@@ -83,7 +83,7 @@ public class SocketReceivingTask implements Runnable {
 
         if (action.equals(Constants.Action.REQUEST) || action.equals(Constants.Action.SUCCESS)) {//asking for images or server received image.send next
             Log.i("NET", "Handling action \"request and success\"");
-//            _delegate.onRequestReceiveSuccess();
+            _delegate.onRequestReceiveSuccess();
         } else if (action.equals(Constants.Action.SEND)) {//server is sending an image.prepare to receive
             Log.i("NET", "Handling action \"send\"");
             newHandleImageReceiving(message);
