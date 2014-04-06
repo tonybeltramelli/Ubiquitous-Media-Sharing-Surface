@@ -54,7 +54,7 @@ namespace surface_app
             TestImage testImg = new TestImage("\\Resources\\Koala.jpg", "tag");
             //images.Add(System.IO.Directory.GetFiles(@"C:\Users\Public\Pictures\Sample Pictures", "Koala.jpg"));
 
-            scatterImages.ItemsSource = System.IO.Directory.GetFiles(@"C:\Users\Public\Pictures\Sample Pictures", "Koala.jpg"); // images; //Gallery.Instance.Images;
+            // scatterImages.ItemsSource = System.IO.Directory.GetFiles(@"C:\Users\Public\Pictures\Sample Pictures", "Koala.jpg"); // images; //Gallery.Instance.Images;
             
             
             // BitmapImage img = new BitmapImage(new Uri("\\Resources\\Koala.jpg", UriKind.Relative));
