@@ -7,7 +7,7 @@ using System.Windows.Media;
 using Microsoft.Surface.Presentation;
 using Microsoft.Surface.Presentation.Controls;
 
-namespace ShoppingCart
+namespace surface_app
 {
     /// <summary>
     /// A class that inherits ScatterView with Drag & Drop support.
