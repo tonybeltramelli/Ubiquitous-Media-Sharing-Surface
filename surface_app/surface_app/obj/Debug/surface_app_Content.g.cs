@@ -9,6 +9,6 @@
 //------------------------------------------------------------------------------
 
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/icon.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("surfaceapplication1.xml")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("surfaceapplication.xml")]
 
 

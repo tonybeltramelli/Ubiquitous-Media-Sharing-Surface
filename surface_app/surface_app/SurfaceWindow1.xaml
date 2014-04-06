@@ -1,16 +1,44 @@
-﻿<s:SurfaceWindow x:Class="surface_app.SurfaceWindow1"
+﻿<s:SurfaceWindow x:Class="surface_app.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:s="http://schemas.microsoft.com/surface/2008"
-    Title="SurfaceApplication1"
+    xmlns:sc="clr-namespace:surface_app"
+    xmlns:local="clr-namespace:surface_app"
+    Title="SurfaceApplication"
     >
   <Grid>
-        <s:ScatterView Name="scatter" Margin="138,0,0,0">
+        <s:ScatterView Name="scatterImges" Margin="138,0,0,0">
             <s:ScatterView.ItemTemplate>
                 <DataTemplate>
                     <Image Source="{Binding}"/>
                 </DataTemplate>
             </s:ScatterView.ItemTemplate>
         </s:ScatterView>
+
+        <s:SurfaceListBox x:Name="PhonePin" Grid.Row="1" 
+                      s:SurfaceDragDrop.DragCompleted="OnImageDragCompleted"
+                      s:SurfaceDragDrop.DragCanceled="OnImageDragCanceled" 
+                      PreviewMouseLeftButtonDown="OnImagePreviewMouseLeftButtonDown" 
+                      PreviewMouseMove="OnImagePreviewMouseMove" 
+                      PreviewMouseLeftButtonUp="OnImagePreviewMouseLeftButtonUp" 
+                      ItemsSource="{Binding Source={StaticResource ShoppingListData}, XPath=Entry}" 
+                      Style="{StaticResource ShoppingListStyle}" 
+                      PreviewTouchDown="OnImagePreviewTouchDown" 
+                      PreviewTouchMove="OnImagePreviewTouchMove" 
+                      PreviewTouchUp="OnImagePreviewTouchUp" />
+
+        <s:TagVisualizer VisualizationAdded="OnVisualizationAdded" Grid.RowSpan="1">
+            <s:TagVisualizer.Definitions>
+                <s:TagVisualizationDefinition Source="CardValidationPanel.xaml" 
+                                      PhysicalCenterOffsetFromTag="0,2" 
+                                      LostTagTimeout="1000" 
+                                      MaxCount="1" 
+                                      TagRemovedBehavior="Fade" 
+                                      Value="0xC0" />
+            </s:TagVisualizer.Definitions>
+
+            <local:DragDropScatterView x:Name="ScatterLayer" Background="Transparent" ItemContainerStyle="{StaticResource ScatterItemStyle}" />
+        </s:TagVisualizer>
+      
     </Grid>
 </s:SurfaceWindow>

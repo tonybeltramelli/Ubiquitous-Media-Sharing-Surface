@@ -1,11 +1,8 @@
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\Resources\icon.png
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\SurfaceApplication1.xml
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\surface_app.exe
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\surface_app.pdb
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\ResolveAssemblyReference.cache
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\SurfaceWindow1.baml
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\App.baml
-E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\SurfaceWindow1.g.cs
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\App.g.cs
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app_Content.g.cs
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app_MarkupCompile.cache
@@ -18,3 +15,8 @@ E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\Newtonsoft.Json.dll
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\Newtonsoft.Json.pdb
 E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\Newtonsoft.Json.xml
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\bin\Debug\SurfaceApplication.xml
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\SurfaceWindow1.baml
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\SurfaceWindow1.g.cs
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\GeneratedInternalTypeHelper.g.cs
+E:\Pervasive-Computing-Shared-Surface\surface_app\surface_app\obj\Debug\surface_app_MarkupCompile.lref

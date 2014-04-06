@@ -60,8 +60,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IdentityValidatedEventArgs.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Gallery.cs" />
+    <Compile Include="Reusable Classes\InputDeviceHelper.cs" />
     <Compile Include="Reusable Classes\DragDropScatterView.cs" />
     <Compile Include="TcpCommand.cs" />
     <Compile Include="TcpServer.cs">
@@ -113,7 +115,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\Koala.jpg" />
-    <Content Include="SurfaceApplication1.xml">
+    <Content Include="SurfaceApplication.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
