@@ -39,7 +39,7 @@ namespace dk.itu.spct.tcp
                     
                     // [{'action':'0','tag_id':'0xAAA'}]
                     case actions.start:
-                        Console.WriteLine("--Device registered: {0}", (string)item.tag_id);
+                        Console.WriteLine("-Device registered: {0}", (string)item.tag_id);
                         conn.Id = item.tag_id;
                         break;
                     
@@ -49,7 +49,7 @@ namespace dk.itu.spct.tcp
                         string file_name = (string)item.name;
                         int image_size = (int)item.size;
 
-                        Console.WriteLine("--Recieve image '{0}' from '{1}' of size '{2}'", file_name, conn.Id, image_size);
+                        Console.WriteLine("-Recieve image '{0}' from '{1}' of size '{2}'", file_name, conn.Id, image_size);
 
                         byte[] data = conn.processImage(image_size);
 
@@ -62,7 +62,7 @@ namespace dk.itu.spct.tcp
 
                     //[{'action':'4'}]
                     case actions.success:
-                        Console.WriteLine("--Success received from '{0}'", conn.Id);
+                        Console.WriteLine("-Success received from '{0}'", conn.Id);
                         conn.waitForSuccess = false;
                         break;
                     
@@ -75,9 +75,9 @@ namespace dk.itu.spct.tcp
         //Request gallery image to client
         //[{'action':'2'}]
         public void requestGallery(TcpServerConnection conn){
-            string data = @"[{'action':'" + actions.request + @"'}]";
+            string data = @"[{""action"":""" + actions.request + @"""}]";
             conn.sendData(new Message(data));
-            Console.WriteLine("--Message sent to {0}: {1}", conn.Id, data);
+            Console.WriteLine("-Message sent to {0}: {1}", conn.Id, data);
         }
         //Generate JSON object from text
         //[{'action':'3'},{'file_name':'image1','data':'image1'}]
@@ -87,7 +87,8 @@ namespace dk.itu.spct.tcp
             }
 
             byte[] bytes = img.ByteArray();
-            string text = @"[{'action':'" + actions.send + @"','name':'" + img.File_Name + @"','size':'" + bytes.Length + @"'}]";
+
+            string text = @"[{""action"":""" + actions.send + @""",""name"":""" + img.File_Name + @""",""size"":""" + bytes.Length + @"""}]";
 
             Message message = new Message(text);
             message.data = bytes;
@@ -95,11 +96,11 @@ namespace dk.itu.spct.tcp
             
             img.AddOwner(tag_id);
 
-            Console.WriteLine("--Image sent to {0}: {1} size {2}", conn.Id, img.File_Name,bytes.Length);
+            Console.WriteLine("-Image sent to {0}: {1} size {2}", conn.Id, img.File_Name,bytes.Length);
         }
         //Image transfered successfuly notificaiton
         public void sendSuccessNotification(TcpServerConnection conn, string message) {
-            string text = @"[{'action':'" + actions.success + @"','message':'" + message + @"'}]";
+            string text = @"[{""action"":""" + actions.success + @""",""messag"":""" + message + @"""}]";
             conn.sendData(new Message(text));
         }
         private dynamic textToJsonObj(string text) {

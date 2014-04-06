@@ -4,7 +4,7 @@
     xmlns:s="http://schemas.microsoft.com/surface/2008"
     xmlns:sc="clr-namespace:surface_app"
     xmlns:local="clr-namespace:surface_app"
-    Title="SurfaceApplication"
+    Title="Surface Application"
     >
   <Grid>
         <s:ScatterView Name="scatterImges" Margin="138,0,0,0">
@@ -21,8 +21,6 @@
                       PreviewMouseLeftButtonDown="OnImagePreviewMouseLeftButtonDown" 
                       PreviewMouseMove="OnImagePreviewMouseMove" 
                       PreviewMouseLeftButtonUp="OnImagePreviewMouseLeftButtonUp" 
-                      ItemsSource="{Binding Source={StaticResource ShoppingListData}, XPath=Entry}" 
-                      Style="{StaticResource ShoppingListStyle}" 
                       PreviewTouchDown="OnImagePreviewTouchDown" 
                       PreviewTouchMove="OnImagePreviewTouchMove" 
                       PreviewTouchUp="OnImagePreviewTouchUp" />
@@ -37,7 +35,7 @@
                                       Value="0xC0" />
             </s:TagVisualizer.Definitions>
 
-            <local:DragDropScatterView x:Name="ScatterLayer" Background="Transparent" ItemContainerStyle="{StaticResource ScatterItemStyle}" />
+            <local:DragDropScatterView x:Name="ScatterLayer" Background="Transparent" />
         </s:TagVisualizer>
       
     </Grid>

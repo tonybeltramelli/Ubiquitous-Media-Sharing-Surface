@@ -13,7 +13,7 @@ namespace dk.itu.spct.tcp
     public partial class TcpServer : Component
     {
         //Constants
-        private const int m_port = 5555; //Server listening port
+        private static int m_port = 5555; //Server listening port
         private const int m_idleTime = 50;
         //Server
         private List<TcpServerConnection> connections;
@@ -22,6 +22,13 @@ namespace dk.itu.spct.tcp
         private TcpListener listener;
         private Encoding m_encoding;
         private bool m_isOpen;
+        
+        //GET-SET
+        public static int Port{
+            get{
+                return m_port;
+             }
+        }
 
         public TcpServer() {
             initialize();
@@ -71,7 +78,6 @@ namespace dk.itu.spct.tcp
                         TcpClient socket = listener.AcceptTcpClient();
                         TcpServerConnection conn = new TcpServerConnection(socket, m_encoding);
                         lock (connections) {
-                            Console.WriteLine("--Device detected...");
                             connections.Add(conn);
                         }
                     } else {
@@ -86,16 +92,21 @@ namespace dk.itu.spct.tcp
         private void runSender() {
             while (m_isOpen) {
                 try {
-                    foreach (TcpServerConnection l_con in connections) {
+                    List<int> toRemove = new List<int>();
+                    for (int i = 0; i < connections.Count; i++){
+                        TcpServerConnection l_con = connections[i];
                         if (l_con.connected()) {
                             l_con.processOutgoing();
                             l_con.processIncoming();
                         } else {
-                            lock (connections) {
-                                Console.WriteLine("--Device disconnected: " + l_con.Id);
-                                Gallery.Instance.removeDevice(l_con.Id);
-                                connections.Remove(l_con);
-                            }
+                            toRemove.Add(i);
+                        }
+                    }
+                    foreach (int id in toRemove) {
+                        Console.WriteLine("-Device disconnected: " + connections[id].Id);
+                        lock (connections) {
+                            Gallery.Instance.removeDevice(connections[id].Id);
+                            connections.RemoveAt(id);
                         }
                     }
                 } catch (Exception){}
@@ -138,7 +149,7 @@ namespace dk.itu.spct.tcp
 
             lock (this) {
 
-                Console.WriteLine("--Server stopped");
+                Console.WriteLine("-Server stopped");
 
                 m_isOpen = false;
                 foreach (TcpServerConnection conn in connections) {
