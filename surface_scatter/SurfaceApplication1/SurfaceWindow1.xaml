@@ -1,0 +1,19 @@
+﻿<s:SurfaceWindow x:Class="SurfaceApplication1.SurfaceWindow1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:s="http://schemas.microsoft.com/surface/2008"
+    Title="SurfaceApplication1"
+    >
+  <Grid>
+        <s:ScatterView x:Name="scatter" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding}">
+            <s:ScatterView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Image Source="{Binding BitmapSource}"/>
+                        <Label FontSize="14" Content="test"/>
+                    </Grid>
+                </DataTemplate>
+            </s:ScatterView.ItemTemplate>
+        </s:ScatterView>
+    </Grid>
+</s:SurfaceWindow>
