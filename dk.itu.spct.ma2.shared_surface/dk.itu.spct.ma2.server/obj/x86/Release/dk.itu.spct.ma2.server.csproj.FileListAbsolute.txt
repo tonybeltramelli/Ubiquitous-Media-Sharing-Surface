@@ -1,0 +1,8 @@
+E:\dk.itu.spct.ma2.server\dk.itu.spct.ma2.server\bin\Release\dk.itu.spct.ma2.server.exe
+E:\dk.itu.spct.ma2.server\dk.itu.spct.ma2.server\bin\Release\dk.itu.spct.ma2.server.pdb
+E:\dk.itu.spct.ma2.server\dk.itu.spct.ma2.server\obj\x86\Release\dk.itu.spct.ma2.server.exe
+E:\dk.itu.spct.ma2.server\dk.itu.spct.ma2.server\obj\x86\Release\dk.itu.spct.ma2.server.pdb
+E:\dk.itu.spct.ma2.server\dk.itu.spct.ma2.server\bin\Release\Newtonsoft.Json.dll
+E:\dk.itu.spct.ma2.server\dk.itu.spct.ma2.server\bin\Release\Newtonsoft.Json.pdb
+E:\dk.itu.spct.ma2.server\dk.itu.spct.ma2.server\bin\Release\Newtonsoft.Json.xml
+E:\dk.itu.spct.ma2.server\dk.itu.spct.ma2.server\obj\x86\Release\dk.itu.spct.ma2.server.csprojResolveAssemblyReference.cache
