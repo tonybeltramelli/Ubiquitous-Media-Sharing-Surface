@@ -1,3 +1,6 @@
+package dk.itu.pervasive.mobile.tests.socket_communication;
+
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
