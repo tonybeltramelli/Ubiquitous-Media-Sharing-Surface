@@ -1,4 +1,0 @@
-E:\dk.itu.spct.ma2.shared_surface\bin\dk.itu.spct.core.dll
-E:\dk.itu.spct.ma2.shared_surface\bin\dk.itu.spct.core.pdb
-E:\dk.itu.spct.ma2.shared_surface\dk.itu.spct.ma2.server\obj\x86\Debug\dk.itu.spct.core.dll
-E:\dk.itu.spct.ma2.shared_surface\dk.itu.spct.ma2.server\obj\x86\Debug\dk.itu.spct.core.pdb
