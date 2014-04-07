@@ -1,5 +1,8 @@
 using System;
+using System.Windows;
+using Microsoft.Surface;
 using Microsoft.Surface.Presentation.Controls;
+using Microsoft.Surface.Presentation.Input;
 
 using dk.itu.spct.common;
 using dk.itu.spct.tcp;
@@ -11,20 +14,13 @@ namespace dk.itu.spct.ma2.surface
     /// </summary>
     public partial class SurfaceWindow1 : SurfaceWindow
     {
-
-        private TcpServer server;
         /// <summary>
         /// Default constructor.
         /// </summary>
         public SurfaceWindow1() {
             InitializeComponent();
             scatter.ItemsSource = Gallery.Instance.Images;
-            server = new TcpServer();
-            server.Start();
-        }
-
-        public void Request(Object sender, EventArgs e) {
-            server.requestDeviceGallery(1);
+            TcpServer.Instance.Start();
         }
 
         /// <summary>
@@ -33,7 +29,7 @@ namespace dk.itu.spct.ma2.surface
         /// <param name="e"></param>
         protected override void OnClosed(EventArgs e) {
             base.OnClosed(e);
-            server.Stop();
+            TcpServer.Instance.Stop();
         }
     }
 }

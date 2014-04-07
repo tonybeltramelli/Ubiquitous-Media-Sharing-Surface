@@ -32,8 +32,16 @@ namespace dk.itu.spct.tcp
              }
         }
 
-        public TcpServer() {
-            initialize();
+         //Singleton implementation
+        private static TcpServer instance;
+        private TcpServer() { initialize(); }
+        public static TcpServer Instance {
+            get {
+                if (instance == null){
+                    instance = new TcpServer();
+                }
+                return instance;
+            }
         }
 
         //Setup server

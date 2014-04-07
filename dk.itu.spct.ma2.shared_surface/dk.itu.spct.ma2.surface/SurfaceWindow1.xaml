@@ -4,7 +4,12 @@
     xmlns:s="http://schemas.microsoft.com/surface/2008"
     Title="dk.itu.spct.ma2.surface"
     >
-    <Grid>
+    <s:TagVisualizer x:Name="Visualizer">
+        <s:TagVisualizer.Definitions>
+            <s:TagVisualizationDefinition
+                Source="Device.xaml" />
+        </s:TagVisualizer.Definitions>
+        <Grid>
         <s:ScatterView x:Name="scatter" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding}">
             <s:ScatterView.ItemTemplate>
                 <DataTemplate>
@@ -15,5 +20,6 @@
                 </DataTemplate>
             </s:ScatterView.ItemTemplate>
         </s:ScatterView>
-    </Grid>
+        </Grid>
+    </s:TagVisualizer>
 </s:SurfaceWindow>

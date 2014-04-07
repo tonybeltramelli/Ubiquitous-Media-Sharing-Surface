@@ -72,6 +72,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="dk.itu.spct.tcp\TcpServerConnection.cs" />
+    <Compile Include="Device.xaml.cs">
+      <DependentUpon>Device.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SurfaceWindow1.xaml.cs">
       <DependentUpon>SurfaceWindow1.xaml</DependentUpon>
     </Compile>
@@ -108,8 +111,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <Resource Include="Resources\phone.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Device.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SurfaceWindow1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
