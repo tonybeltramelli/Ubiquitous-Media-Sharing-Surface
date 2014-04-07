@@ -1,7 +1,5 @@
 package dk.itu.pervasive.mobile.data;
 
-import java.io.FileOutputStream;
-
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,6 +9,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 import dk.itu.pervasive.mobile.R;
+
+import java.io.FileOutputStream;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
@@ -107,4 +107,8 @@ public class DataManager
 		
 		saveData();
 	}
+
+    public Context getContext(){
+        return _context;
+    }
 }

@@ -16,6 +16,7 @@ public class MainActivity extends APrefActivity implements GalleryFragment2.Serv
 
     private boolean isInitialized = false;
 
+    private boolean isActive;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -24,7 +25,7 @@ public class MainActivity extends APrefActivity implements GalleryFragment2.Serv
 		setContentView(R.layout.activity_main);
         ImageManager2.getInstance().init(this);
         activateGallery();
-
+        isActive = true;
 	}
 	
 	@Override
@@ -38,6 +39,7 @@ public class MainActivity extends APrefActivity implements GalleryFragment2.Serv
 	{
 		_unbindService();
 		super.onStop();
+        isActive = false;
 	}
 	
 	@Override
@@ -82,8 +84,9 @@ public class MainActivity extends APrefActivity implements GalleryFragment2.Serv
             Log.i("TAG" , "initialized");
             _bindService();
         }
+   }
 
-
-
-    }
+   public boolean isActivityRunning(){
+       return isActive;
+   }
 }
