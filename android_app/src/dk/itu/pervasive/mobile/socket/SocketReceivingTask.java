@@ -54,7 +54,8 @@ public class SocketReceivingTask implements Runnable {
             } catch (IOException e) {
                 //if anything wrong report error and return
                 Log.i("NET", "Reader task failed to read server message. Reporting failure");
-                _delegate.onRequestFailure();
+                new RestartCycleTask(_delegate).execute();
+//                _delegate.onRequestFailure();
                 return;
             }
         }
