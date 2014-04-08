@@ -1,10 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using Newtonsoft.Json;
-using System.Drawing;
 
 using dk.itu.spct.common;
 
@@ -58,9 +52,8 @@ namespace dk.itu.spct.tcp
 
                         ImageObject img = new ImageObject(file_name, data);
                         img.AddOwner(conn.Id);
-
                         gallery.AddImage(img);
-                        
+
                         sendSuccessNotification(conn, img.File_Name);
                         break;
 
@@ -94,9 +87,7 @@ namespace dk.itu.spct.tcp
                 }
             }
             if (img != null) {
-                foreach (int owner in img.Owners) {
-                    if (owner == tag_id) { return; }
-                }
+                if (img.Owners.Contains(tag_id)) return;
             } else {
                 return;
             }
@@ -108,8 +99,10 @@ namespace dk.itu.spct.tcp
             Message message = new Message(text);
             message.data = bytes;
             conn.sendData(message);
-            
+
+            Gallery.Instance.Images.Remove(img);
             img.AddOwner(tag_id);
+            Gallery.Instance.Images.Add(img);
 
             Console.WriteLine("-Image sent to {0}: {1} size {2}", conn.Id, img.File_Name,bytes.Length);
         }

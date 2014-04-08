@@ -106,7 +106,7 @@
   <ItemGroup>
     <Content Include="lib\Net40\Newtonsoft.Json.dll" />
     <Content Include="lib\Net40\Newtonsoft.Json.pdb" />
-    <Resource Include="test.png" />
+    <Resource Include="Resources\test.jpg" />
     <Resource Include="lib\Net40\Newtonsoft.Json.xml" />
     <Content Include="Resources\icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

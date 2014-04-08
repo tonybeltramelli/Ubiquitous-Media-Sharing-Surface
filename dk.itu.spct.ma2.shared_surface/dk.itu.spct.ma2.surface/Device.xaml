@@ -9,10 +9,7 @@
     d:DesignHeight="200"
     d:DesignWidth="200">
  
-    <Grid AllowDrop="true" Background="Transparent"
-          PreviewDrop="OnVisualizationDrop" 
-          PreviewDragEnter="OnVisualizationEnter"
-          Drop="Grid_PreviewGiveFeedback">
+    <Grid AllowDrop="true" Background="Transparent" Drop="OnDrop">
         <Image Source="Resources\phone.png" Width="300" Height="550"/>
 		<s:SurfaceButton
             Margin="0 25 0 0"
@@ -22,6 +19,7 @@
 			Background="Honeydew"
             Foreground="Green"
 			Click="OnPinButtonClicked"/>
+        <Label x:Name="tag_id" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="72"/>
 	</Grid>
 
 </s:TagVisualization>

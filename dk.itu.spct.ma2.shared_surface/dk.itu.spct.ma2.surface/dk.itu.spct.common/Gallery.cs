@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using dk.itu.spct.common;
 
 namespace dk.itu.spct.common
 {
     //Gallery representation
     public class Gallery
     {
-
         private ObservableCollectionEx<ImageObject> images;
 
         //Get-Set
@@ -49,12 +43,21 @@ namespace dk.itu.spct.common
                 images.Add(img);
             }
         }
+        //Remove image
+        public void removeImage(ImageObject img) {
+            lock (images) {
+                images.Remove(img);
+            }
+        }
         //Remove owner from images
         public void removeDevice(int tag_id) {
             lock (images) {
                 foreach (ImageObject img in images) {
-                    if (img.RemoveOwner(tag_id) == 0) {
+                    if (img.RemoveOwner(tag_id) > 0) {
                         images.Remove(img);
+                        if (img.Owners.Count != 0) {
+                            images.Add(img);
+                        }
                     }
                 }
             }
@@ -68,12 +71,12 @@ namespace dk.itu.spct.common
     //Image representation
     public class ImageObject
     {
+
         //Dynamic id
         static int m_count = 0;
-        private static int m_id;
+        private int m_id;
         private string m_file_name;
         private Bitmap m_bitmap;
-
         private HashSet<int> owners;
 
         //GET-SET
@@ -97,7 +100,6 @@ namespace dk.itu.spct.common
                 return Imaging.CreateBitmapSourceFromBitmap(m_bitmap);
             }
         }
-
         public HashSet<int> Owners {
             get {
                 return owners;
@@ -112,12 +114,12 @@ namespace dk.itu.spct.common
                 m_bitmap = genBitmap(data);
             }
         }
-
         public ImageObject(string fileName, Bitmap bitMap) {
             initialize();
             m_file_name = fileName;
             m_bitmap = bitMap;
         }
+
         //Class implementation
 
         //Setup image
@@ -135,9 +137,8 @@ namespace dk.itu.spct.common
         //Remove device owner from image
         public int RemoveOwner(int tag_id) {
             lock (owners) {
-                owners.RemoveWhere(id => id == tag_id);
+                return owners.RemoveWhere(id => id == tag_id);
             }
-            return owners.Count;
         }
         //Get bitmap byte array
         public byte[] ByteArray() {

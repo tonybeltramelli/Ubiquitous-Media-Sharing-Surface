@@ -12,23 +12,27 @@
         <Grid>
             <s:ScatterView x:Name="scatter" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                            ItemsSource="{Binding}" Background="Transparent"
-                           PreviewTouchMove="Img_TouchMove">
+                           PreviewTouchUp="Img_TouchUp" PreviewTouchDown="Img_TouchDown" >
                 <s:ScatterView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
                             <Label x:Name="img_id" Content="{Binding Id}" Visibility="Hidden"/>
-                            <Image x:Name="Img"
-                                Source="{Binding BitmapSource}"/>
+                            <Image x:Name="Img" Source="{Binding BitmapSource}"/>
+                            
                             <ListBox
                                 IsHitTestVisible="False"
                                 ItemsSource="{Binding Owners}"
-                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                Width="20"
-                                Height="20"
-                                BorderBrush="Black"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"                            
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top">
-                            </ListBox> 
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                        </StackPanel>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                            </ListBox>
+            
                         </Grid>
                     </DataTemplate>
                 </s:ScatterView.ItemTemplate>

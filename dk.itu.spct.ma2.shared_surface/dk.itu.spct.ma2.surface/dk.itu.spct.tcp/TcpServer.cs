@@ -1,12 +1,10 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Drawing;
 
 using dk.itu.spct.common;
 
@@ -15,7 +13,7 @@ namespace dk.itu.spct.tcp
     public partial class TcpServer : Component
     {
         //Constants
-        private static int m_port = 5555; //Server listening port
+        private static int m_port = 5555;
         private const int m_idleTime = 50;
         //Server
         private List<TcpServerConnection> connections;

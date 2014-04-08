@@ -1,15 +1,10 @@
 using System;
 using System.Windows;
-using Microsoft.Surface;
 using Microsoft.Surface.Presentation.Controls;
-using Microsoft.Surface.Presentation.Input;
 
 using dk.itu.spct.common;
 using dk.itu.spct.tcp;
-using System.Windows.Controls;
-using Microsoft.Surface.Presentation;
-using System.Windows.Media;
-using System.Drawing;
+using System.Windows.Input;
 
 namespace dk.itu.spct.ma2.surface
 {
@@ -18,6 +13,8 @@ namespace dk.itu.spct.ma2.surface
     /// </summary>
     public partial class SurfaceWindow1 : SurfaceWindow
     {
+        private EventData dataObj;
+
         /// <summary>
         /// Default constructor.
         /// </summary>
@@ -25,6 +22,7 @@ namespace dk.itu.spct.ma2.surface
             InitializeComponent();
             scatter.ItemsSource = Gallery.Instance.Images;
             TcpServer.Instance.Start();
+            dataObj = new EventData();
         }
 
         /// <summary>
@@ -35,23 +33,28 @@ namespace dk.itu.spct.ma2.surface
             base.OnClosed(e);
             TcpServer.Instance.Stop();
         }
-
-        private void Img_TouchMove(object sender, System.Windows.Input.TouchEventArgs e) {
+        // Get the current mouse position
+        private void Img_TouchDown(object sender, System.Windows.Input.TouchEventArgs e) {
+            dataObj.touch = e.GetTouchPoint(null);
+        }
+        // Image touch release
+        private void Img_TouchUp(object sender, System.Windows.Input.TouchEventArgs e) {
             var va = FindCommonVisualAncestor((DependencyObject)e.OriginalSource);
             ScatterViewItem svi = e.OriginalSource as ScatterViewItem;
-            ImageObject img = (ImageObject)svi.Content;
-            DataObject da = new DataObject("img_id", img.Id);
-            DragDrop.DoDragDrop(va, da, DragDropEffects.Move);
+            ImageObject img = ((ImageObject)svi.Content);
+            if(img != null){
+                dataObj.Img_id = img.Id;
+                dataObj.file_name = ((ImageObject)svi.Content).File_Name;
+                DataObject da = new DataObject("data", dataObj);
+                DragDrop.DoDragDrop(va, da, DragDropEffects.Move);
+            }
         }
-
-        //TODO Remove
-        private void Img_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e) {
-            var va = FindCommonVisualAncestor((DependencyObject)e.OriginalSource);
-            ScatterView sv = (ScatterView)sender;
-            System.Windows.Controls.Image img = e.OriginalSource as System.Windows.Controls.Image;
-            String id = ((Label)((Grid)VisualTreeHelper.GetParent(img)).FindName("img_id")).Content.ToString();
-            DataObject da = new DataObject("img_id", id);
-            DragDrop.DoDragDrop(va, da, DragDropEffects.Move);
+        //Container for data sent between events
+        public class EventData
+        {
+            public int Img_id;
+            public string file_name;
+            public TouchPoint touch;
         }
     }
 }
