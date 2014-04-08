@@ -123,11 +123,11 @@ namespace dk.itu.spct.tcp
             }
         }
         //Send image to specific device
-        public void SendImage(int tag_id, ImageObject img) {
+        public void SendImage(int tag_id, int image_id) {
             foreach (TcpServerConnection conn in connections) {
                 if (conn.Id == tag_id){
                     TCPCommand command = new TCPCommand();
-                    command.sendImage(conn, tag_id, img);
+                    command.sendImage(conn, tag_id, image_id);
                     return;
                 }
             }

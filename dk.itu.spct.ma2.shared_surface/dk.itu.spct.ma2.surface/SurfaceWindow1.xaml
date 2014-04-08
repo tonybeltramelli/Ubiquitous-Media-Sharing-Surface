@@ -10,16 +10,29 @@
                 Source="Device.xaml" />
         </s:TagVisualizer.Definitions>
         <Grid>
-        <s:ScatterView x:Name="scatter" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding}">
-            <s:ScatterView.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Image Source="{Binding BitmapSource}"/>
-                        <Label FontSize="14" Content="test"/>
-                    </Grid>
-                </DataTemplate>
-            </s:ScatterView.ItemTemplate>
-        </s:ScatterView>
+            <s:ScatterView x:Name="scatter" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                           ItemsSource="{Binding}" Background="Transparent"
+                           PreviewTouchMove="Img_TouchMove">
+                <s:ScatterView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Label x:Name="img_id" Content="{Binding Id}" Visibility="Hidden"/>
+                            <Image x:Name="Img"
+                                Source="{Binding BitmapSource}"/>
+                            <ListBox
+                                IsHitTestVisible="False"
+                                ItemsSource="{Binding Owners}"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                Width="20"
+                                Height="20"
+                                BorderBrush="Black"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top">
+                            </ListBox> 
+                        </Grid>
+                    </DataTemplate>
+                </s:ScatterView.ItemTemplate>
+            </s:ScatterView>
         </Grid>
     </s:TagVisualizer>
 </s:SurfaceWindow>

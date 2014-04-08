@@ -85,9 +85,20 @@ namespace dk.itu.spct.tcp
         }
         //Generate JSON object from text
         //[{'action':'3'},{'file_name':'image1','data':'image1'}]
-        public void sendImage(TcpServerConnection conn, int tag_id, ImageObject img) {
-            foreach (int owner in img.Owners) {
-                if (owner == tag_id) { return; }
+        public void sendImage(TcpServerConnection conn, int tag_id, int image_id) {
+            ImageObject img = null;
+            foreach(ImageObject img_tmp in Gallery.Instance.Images){
+                if (image_id == img_tmp.Id) {
+                    img = img_tmp;
+                    break;
+                }
+            }
+            if (img != null) {
+                foreach (int owner in img.Owners) {
+                    if (owner == tag_id) { return; }
+                }
+            } else {
+                return;
             }
 
             byte[] bytes = img.ByteArray();

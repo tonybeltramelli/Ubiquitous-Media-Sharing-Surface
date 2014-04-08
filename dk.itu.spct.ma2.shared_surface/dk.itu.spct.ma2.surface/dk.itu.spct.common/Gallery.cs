@@ -13,13 +13,13 @@ using dk.itu.spct.common;
 namespace dk.itu.spct.common
 {
     //Gallery representation
-    public class Gallery{
+    public class Gallery
+    {
 
         private ObservableCollectionEx<ImageObject> images;
 
         //Get-Set
-        public ObservableCollectionEx<ImageObject> Images
-        {
+        public ObservableCollectionEx<ImageObject> Images {
             get {
                 return images;
             }
@@ -28,17 +28,17 @@ namespace dk.itu.spct.common
         //Singleton implementation
         private static Gallery instance;
         private Gallery() { initialize(); }
-        public static Gallery Instance{
+        public static Gallery Instance {
             get {
-                if (instance == null){
-                instance = new Gallery();
+                if (instance == null) {
+                    instance = new Gallery();
                 }
                 return instance;
             }
         }
 
         //Class implementation
-        
+
         //Setup gallery
         private void initialize() {
             images = new ObservableCollectionEx<ImageObject>(new List<ImageObject>());
@@ -50,7 +50,7 @@ namespace dk.itu.spct.common
             }
         }
         //Remove owner from images
-        public void removeDevice(int tag_id){
+        public void removeDevice(int tag_id) {
             lock (images) {
                 foreach (ImageObject img in images) {
                     if (img.RemoveOwner(tag_id) == 0) {
@@ -60,33 +60,40 @@ namespace dk.itu.spct.common
             }
         }
         //Destroy gallery
-        public void destroy () {
+        public void destroy() {
             instance = null;
         }
     }
-    
-    //Image representation
-    public class ImageObject{
 
+    //Image representation
+    public class ImageObject
+    {
+        //Dynamic id
+        static int m_count = 0;
+        private static int m_id;
         private string m_file_name;
         private Bitmap m_bitmap;
 
         private HashSet<int> owners;
 
         //GET-SET
+        public int Id {
+            get {
+                return m_id;
+            }
+        }
         public string File_Name {
             get {
                 return m_file_name;
             }
         }
         public Bitmap Bitmap {
-            get{
+            get {
                 return m_bitmap;
             }
         }
-        public BitmapSource BitmapSource
-        {
-            get{
+        public BitmapSource BitmapSource {
+            get {
                 return Imaging.CreateBitmapSourceFromBitmap(m_bitmap);
             }
         }
@@ -99,24 +106,25 @@ namespace dk.itu.spct.common
 
         //Create image <Image file name, data as string>
         public ImageObject(string file_name, byte[] data) {
-            if (!String.IsNullOrEmpty(file_name) && data.Length > 0){
+            if (!String.IsNullOrEmpty(file_name) && data.Length > 0) {
                 initialize();
                 m_file_name = file_name;
                 m_bitmap = genBitmap(data);
             }
         }
 
-        public ImageObject(string fileName, Bitmap bitMap)
-        {
+        public ImageObject(string fileName, Bitmap bitMap) {
             initialize();
             m_file_name = fileName;
             m_bitmap = bitMap;
         }
         //Class implementation
-        
+
         //Setup image
         private void initialize() {
             owners = new HashSet<int>();
+            m_count++;
+            m_id = m_count;
         }
         //Add device owner to current image
         public void AddOwner(int tag_id) {
@@ -125,9 +133,8 @@ namespace dk.itu.spct.common
             }
         }
         //Remove device owner from image
-        public int RemoveOwner(int tag_id)
-        {
-            lock(owners){
+        public int RemoveOwner(int tag_id) {
+            lock (owners) {
                 owners.RemoveWhere(id => id == tag_id);
             }
             return owners.Count;
@@ -146,8 +153,7 @@ namespace dk.itu.spct.common
 
     public static class Imaging
     {
-        public static BitmapSource CreateBitmapSourceFromBitmap(Bitmap bitmap)
-        {
+        public static BitmapSource CreateBitmapSourceFromBitmap(Bitmap bitmap) {
             if (bitmap == null)
                 throw new ArgumentNullException("bitmap");
 
