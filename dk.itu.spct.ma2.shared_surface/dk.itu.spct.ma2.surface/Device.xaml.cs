@@ -1,19 +1,13 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows;
 using Microsoft.Surface.Presentation.Controls;
-
 using dk.itu.spct.tcp;
-using dk.itu.spct.ma2.surface;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
+using Microsoft.Surface.Presentation;
+using dk.itu.spct.common;
 
 namespace TaggingLabClass
 {
     public partial class Device
     {
-
         private int m_tag_id = 0;
         private bool isDevicePinned = false;
         private bool isDevicePresent = false;
@@ -67,13 +61,23 @@ namespace TaggingLabClass
             }
         }
 
-        //Drop image in device event
-        private void OnDrop(object sender, DragEventArgs e) {
-            if (e.Data.GetDataPresent("data")) {
-                SurfaceWindow1.EventData data = (SurfaceWindow1.EventData)e.Data.GetData("data");
-                TcpServer.Instance.SendImage(m_tag_id, data.Img_id);
+        private void DropTargetDragEnter(object sender, SurfaceDragDropEventArgs e) {
+            e.Cursor.Visual.Tag = "DragEnter";
+        }
+
+        private void DropTargetDragLeave(object sender, SurfaceDragDropEventArgs e) {
+            e.Cursor.Visual.Tag = null;
+        }
+
+        private void DropTargetDrop(object sender, SurfaceDragDropEventArgs e) {
+            ImageObject img = e.Cursor.Data as ImageObject;
+            if (img != null) {
+                TcpServer.Instance.SendImage(m_tag_id, img.Id);
+                ScatterViewItem item = img.DraggedElement as ScatterViewItem;
+                item.Visibility = Visibility.Visible;
+                item.Orientation = e.Cursor.GetOrientation(this);
+                item.Center = e.Cursor.GetPosition(this);
             }
-            e.Handled = true;
         }
     }
 }

@@ -87,7 +87,9 @@ namespace dk.itu.spct.tcp
                 }
             }
             if (img != null) {
-                if (img.Owners.Contains(tag_id)) return;
+                if (img.Owners.Contains(tag_id)) {
+                    return;
+                }
             } else {
                 return;
             }

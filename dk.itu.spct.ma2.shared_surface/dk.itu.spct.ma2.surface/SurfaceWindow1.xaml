@@ -12,7 +12,8 @@
         <Grid>
             <s:ScatterView x:Name="scatter" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                            ItemsSource="{Binding}" Background="Transparent"
-                           PreviewTouchUp="Img_TouchUp" PreviewTouchDown="Img_TouchDown" >
+                           PreviewTouchDown="Touch_Down"
+                           s:SurfaceDragDrop.DragCanceled="DragCanceled">
                 <s:ScatterView.ItemTemplate>
                     <DataTemplate>
                         <Grid>

@@ -4,7 +4,11 @@ using Microsoft.Surface.Presentation.Controls;
 
 using dk.itu.spct.common;
 using dk.itu.spct.tcp;
+using Microsoft.Surface.Presentation;
+using System.Windows.Media;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Collections.Generic;
 
 namespace dk.itu.spct.ma2.surface
 {
@@ -13,8 +17,6 @@ namespace dk.itu.spct.ma2.surface
     /// </summary>
     public partial class SurfaceWindow1 : SurfaceWindow
     {
-        private EventData dataObj;
-
         /// <summary>
         /// Default constructor.
         /// </summary>
@@ -22,7 +24,6 @@ namespace dk.itu.spct.ma2.surface
             InitializeComponent();
             scatter.ItemsSource = Gallery.Instance.Images;
             TcpServer.Instance.Start();
-            dataObj = new EventData();
         }
 
         /// <summary>
@@ -33,28 +34,78 @@ namespace dk.itu.spct.ma2.surface
             base.OnClosed(e);
             TcpServer.Instance.Stop();
         }
-        // Get the current mouse position
-        private void Img_TouchDown(object sender, System.Windows.Input.TouchEventArgs e) {
-            dataObj.touch = e.GetTouchPoint(null);
-        }
-        // Image touch release
-        private void Img_TouchUp(object sender, System.Windows.Input.TouchEventArgs e) {
-            var va = FindCommonVisualAncestor((DependencyObject)e.OriginalSource);
-            ScatterViewItem svi = e.OriginalSource as ScatterViewItem;
-            ImageObject img = ((ImageObject)svi.Content);
-            if(img != null){
-                dataObj.Img_id = img.Id;
-                dataObj.file_name = ((ImageObject)svi.Content).File_Name;
-                DataObject da = new DataObject("data", dataObj);
-                DragDrop.DoDragDrop(va, da, DragDropEffects.Move);
+
+        private void Touch_Down(object sender, System.Windows.Input.TouchEventArgs e)
+        {
+            FrameworkElement findSource = e.OriginalSource as FrameworkElement;
+            ScatterViewItem draggedElement = null;
+
+            // Find the ScatterViewItem object that is being touched.
+            while (draggedElement == null && findSource != null) {
+                if ((draggedElement = findSource as ScatterViewItem) == null) {
+                    findSource = VisualTreeHelper.GetParent(findSource) as FrameworkElement;
+                }
+            }
+
+            if (draggedElement == null) {
+                return;
+            }
+
+            ImageObject data = draggedElement.Content as ImageObject;
+            if (data == null) {
+                return;
+            }
+
+            // Set the dragged element. This is needed in case the drag operation is canceled.
+            data.DraggedElement = draggedElement;
+
+            ContentControl cursorVisual = new ContentControl() {
+                Content = draggedElement.DataContext
+            };
+
+            // Create a list of input devices, and add the device passed to this event handler.
+            List<InputDevice> devices = new List<InputDevice>();
+            devices.Add(e.Device);
+
+            // If there are touch devices captured within the element, add them to the list of input devices.
+            foreach (InputDevice device in draggedElement.TouchesCapturedWithin) {
+                if (device != e.Device) {
+                    devices.Add(device);
+                }
+            }
+
+            // Get the drag source object.
+            ItemsControl dragSource = ItemsControl.ItemsControlFromItemContainer(draggedElement);
+
+            // Start the drag-and-drop operation.
+            SurfaceDragCursor cursor =
+                SurfaceDragDrop.BeginDragDrop(
+
+                  dragSource,                   // The ScatterView object that the cursor is dragged out from.
+                  draggedElement,               // The ScatterViewItem object that is dragged from the drag source.
+                  cursorVisual,                 // The visual element of the cursor.
+                  draggedElement.DataContext,   // The data attached with the cursor.
+                  devices,                      // The input devices that start dragging the cursor.
+                  DragDropEffects.Move);        // The allowed drag-and-drop effects of the operation.
+
+            // If the cursor was created, the drag-and-drop operation was successfully started.
+            if (cursor != null) {
+                // Hide the ScatterViewItem.
+                draggedElement.Visibility = Visibility.Hidden;
+                // This event has been handled.
+                e.Handled = true;
             }
         }
-        //Container for data sent between events
-        public class EventData
-        {
-            public int Img_id;
-            public string file_name;
-            public TouchPoint touch;
+
+        private void DragCanceled(object sender, SurfaceDragDropEventArgs e) {
+            ImageObject data = e.Cursor.Data as ImageObject;
+            ScatterViewItem item = data.DraggedElement as ScatterViewItem;
+            if (item != null) {
+                item.Visibility = Visibility.Visible;
+                item.Orientation = e.Cursor.GetOrientation(this);
+                item.Center = e.Cursor.GetPosition(this);
+            }
         }
+
     }
 }

@@ -71,7 +71,6 @@ namespace dk.itu.spct.common
     //Image representation
     public class ImageObject
     {
-
         //Dynamic id
         static int m_count = 0;
         private int m_id;
@@ -104,6 +103,10 @@ namespace dk.itu.spct.common
             get {
                 return owners;
             }
+        }
+        public object DraggedElement {
+            get;
+            set;
         }
 
         //Create image <Image file name, data as string>
