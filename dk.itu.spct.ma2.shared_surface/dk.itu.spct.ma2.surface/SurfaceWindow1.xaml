@@ -2,8 +2,45 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:s="http://schemas.microsoft.com/surface/2008"
-    Title="dk.itu.spct.ma2.surface"
-    >
+    Title="dk.itu.spct.ma2.surface">
+
+    <s:SurfaceWindow.Resources>
+        <DataTemplate x:Key="ImageDataTemplate">
+            <Grid>
+                <Label x:Name="img_id" Content="{Binding Id}" Visibility="Hidden"/>
+                <Image x:Name="Img" Source="{Binding BitmapSource}"/>
+
+                <ListBox
+                    IsHitTestVisible="False"
+                    ItemsSource="{Binding Owners}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"                            
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal">
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
+            </Grid>
+        </DataTemplate>
+
+        <Style x:Key="CursorStyle" TargetType="{x:Type ContentControl}">
+            <Setter Property="ContentTemplate" Value="{StaticResource ImageDataTemplate}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                        <ContentPresenter Margin="0"
+                            Content="{TemplateBinding Content}" 
+                            ContentTemplate="{TemplateBinding ContentTemplate}">
+                        </ContentPresenter>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </s:SurfaceWindow.Resources>
+
     <s:TagVisualizer x:Name="Visualizer">
         <s:TagVisualizer.Definitions>
             <s:TagVisualizationDefinition
@@ -11,32 +48,10 @@
         </s:TagVisualizer.Definitions>
         <Grid>
             <s:ScatterView x:Name="scatter" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                           ItemTemplate="{StaticResource ImageDataTemplate}"
                            ItemsSource="{Binding}" Background="Transparent"
                            PreviewTouchDown="Touch_Down"
                            s:SurfaceDragDrop.DragCanceled="DragCanceled">
-                <s:ScatterView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Label x:Name="img_id" Content="{Binding Id}" Visibility="Hidden"/>
-                            <Image x:Name="Img" Source="{Binding BitmapSource}"/>
-                            
-                            <ListBox
-                                IsHitTestVisible="False"
-                                ItemsSource="{Binding Owners}"
-                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"                            
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top">
-                                <ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                        </StackPanel>
-                                    </ItemsPanelTemplate>
-                                </ListBox.ItemsPanel>
-                            </ListBox>
-            
-                        </Grid>
-                    </DataTemplate>
-                </s:ScatterView.ItemTemplate>
             </s:ScatterView>
         </Grid>
     </s:TagVisualizer>

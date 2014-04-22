@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace dk.itu.spct.ma2.surface
 {
@@ -60,7 +61,8 @@ namespace dk.itu.spct.ma2.surface
             data.DraggedElement = draggedElement;
 
             ContentControl cursorVisual = new ContentControl() {
-                Content = draggedElement.DataContext
+                Content = draggedElement.DataContext,
+                Style = FindResource("CursorStyle") as Style
             };
 
             // Create a list of input devices, and add the device passed to this event handler.
@@ -80,7 +82,6 @@ namespace dk.itu.spct.ma2.surface
             // Start the drag-and-drop operation.
             SurfaceDragCursor cursor =
                 SurfaceDragDrop.BeginDragDrop(
-
                   dragSource,                   // The ScatterView object that the cursor is dragged out from.
                   draggedElement,               // The ScatterViewItem object that is dragged from the drag source.
                   cursorVisual,                 // The visual element of the cursor.
