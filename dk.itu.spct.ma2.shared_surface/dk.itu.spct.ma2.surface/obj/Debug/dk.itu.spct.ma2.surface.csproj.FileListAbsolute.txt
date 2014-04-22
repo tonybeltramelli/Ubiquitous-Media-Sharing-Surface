@@ -19,4 +19,3 @@ E:\dk.itu.spct.ma2.shared_surface\dk.itu.spct.ma2.surface\bin\Debug\Newtonsoft.J
 E:\dk.itu.spct.ma2.shared_surface\dk.itu.spct.ma2.surface\bin\Debug\Newtonsoft.Json.pdb
 E:\dk.itu.spct.ma2.shared_surface\dk.itu.spct.ma2.surface\bin\Debug\Newtonsoft.Json.xml
 E:\dk.itu.spct.ma2.shared_surface\dk.itu.spct.ma2.surface\obj\Debug\dk.itu.spct.ma2.surface.csprojResolveAssemblyReference.cache
-E:\dk.itu.spct.ma2.shared_surface\dk.itu.spct.ma2.surface\obj\Debug\GeneratedInternalTypeHelper.g.cs
