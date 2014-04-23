@@ -10,6 +10,8 @@ import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.gallery.GalleryFragment;
 import dk.itu.pervasive.mobile.gallery2.GalleryFragment2;
 import dk.itu.pervasive.mobile.gallery2.ImageManager2;
+import microsoft.aspnet.signalr.client.Platform;
+import microsoft.aspnet.signalr.client.http.android.AndroidPlatformComponent;
 
 public class MainActivity extends APrefActivity implements GalleryFragment2.ServiceCallbacks
 {
@@ -23,6 +25,8 @@ public class MainActivity extends APrefActivity implements GalleryFragment2.Serv
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+        Platform.loadPlatformComponent(new AndroidPlatformComponent());
         ImageManager2.getInstance().init(this);
         activateGallery();
         isActive = true;
