@@ -16,6 +16,7 @@
         su:SurfaceDragDrop.Drop="DropTargetDrop">
             <Image Source="Resources\phone.png" Width="300" Height="550"/>
 		    <s:SurfaceButton
+                x:Name="pin_button"
                 Margin="0 25 0 0"
 			    Content="Lock"
 			    VerticalAlignment="Top"

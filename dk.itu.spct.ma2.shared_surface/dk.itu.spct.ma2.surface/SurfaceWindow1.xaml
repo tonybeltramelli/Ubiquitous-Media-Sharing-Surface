@@ -12,16 +12,17 @@
 
                 <ListBox
                     IsHitTestVisible="False"
-                    ItemsSource="{Binding Owners}"
+                    ItemsSource="{Binding Colors}"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"                            
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical">
+                                <Rectangle Fill="{Binding}" Height="10" Width="10"/>
                             </StackPanel>
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
                 </ListBox>
             </Grid>
         </DataTemplate>

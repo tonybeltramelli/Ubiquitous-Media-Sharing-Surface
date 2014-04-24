@@ -3,13 +3,15 @@ using System.Windows;
 using Microsoft.Surface.Presentation.Controls;
 
 using dk.itu.spct.common;
-using dk.itu.spct.tcp;
+using dk.itu.spct.signalr;
 using Microsoft.Surface.Presentation;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.Drawing;
+using System.ComponentModel;
+using SignalRSelfHost;
 
 namespace dk.itu.spct.ma2.surface
 {
@@ -18,14 +20,26 @@ namespace dk.itu.spct.ma2.surface
     /// </summary>
     public partial class SurfaceWindow1 : SurfaceWindow
     {
+
+        private BackgroundWorker _backgroundWorker = new BackgroundWorker();    //Server background worker
+
         /// <summary>
         /// Default constructor.
         /// </summary>
         public SurfaceWindow1() {
             InitializeComponent();
             scatter.ItemsSource = Gallery.Instance.Images;
-            TcpServer.Instance.Start();
+
+            //Start server
+            _backgroundWorker.DoWork += _backgroundWorker_DoWork;
+            _backgroundWorker.RunWorkerCompleted += _backgroundWorker_Completed;
+            _backgroundWorker.RunWorkerAsync();
         }
+
+        //Run server in a separate thread
+        public void _backgroundWorker_DoWork(object sender, DoWorkEventArgs e) { new SRServer(); }
+        //Server stop event
+        private void _backgroundWorker_Completed(object sender, RunWorkerCompletedEventArgs e) { Console.WriteLine("--Server stopper"); }
 
         /// <summary>
         /// Occurs when the window is about to close. 
@@ -33,7 +47,6 @@ namespace dk.itu.spct.ma2.surface
         /// <param name="e"></param>
         protected override void OnClosed(EventArgs e) {
             base.OnClosed(e);
-            TcpServer.Instance.Stop();
         }
 
         private void Touch_Down(object sender, System.Windows.Input.TouchEventArgs e)

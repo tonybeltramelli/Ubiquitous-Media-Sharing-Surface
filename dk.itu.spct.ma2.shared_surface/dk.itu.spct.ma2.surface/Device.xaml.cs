@@ -1,8 +1,9 @@
 ﻿using System.Windows;
 using Microsoft.Surface.Presentation.Controls;
-using dk.itu.spct.tcp;
+using dk.itu.spct.signalr;
 using Microsoft.Surface.Presentation;
 using dk.itu.spct.common;
+using System.Windows.Media;
 
 namespace TaggingLabClass
 {
@@ -29,14 +30,20 @@ namespace TaggingLabClass
             tag_id.Content = m_tag_id;
             Visibility = Visibility.Visible;
             isDevicePresent = true;
+
+            string color_id = Gallery.Instance.Colorchart[m_tag_id];
+            var color = (Color)ColorConverter.ConvertFromString(color_id);
+            tag_id.Foreground = new SolidColorBrush(color);
+            pin_button.Background = new SolidColorBrush(color);
+
             if (!isDevicePinned)
-                TcpServer.Instance.requestDeviceGallery(m_tag_id);
+                ConnectionManager.Instance.RequestGallery(m_tag_id);
         }
 
         void OnTagRemovedFromTheSurface(object s, RoutedEventArgs e) {
             isDevicePresent = false;
             if (!isDevicePinned) {
-                TcpServer.Instance.DisconnectDevice(m_tag_id);
+                ConnectionManager.Instance.DisconnectDevice(m_tag_id);
                 TagRemovedBehavior = TagRemovedBehavior.Fade;
                 Visibility = Visibility.Hidden;
             }
@@ -49,7 +56,7 @@ namespace TaggingLabClass
                 button.Content = "Lock";
                 isDevicePinned = false;
                 if (!isDevicePresent) {
-                    TcpServer.Instance.DisconnectDevice(m_tag_id);
+                    ConnectionManager.Instance.DisconnectDevice(m_tag_id);
                     TagRemovedBehavior = TagRemovedBehavior.Fade;
                     Visibility = Visibility.Hidden;
                 }
@@ -72,7 +79,7 @@ namespace TaggingLabClass
         private void DropTargetDrop(object sender, SurfaceDragDropEventArgs e) {
             ImageObject img = e.Cursor.Data as ImageObject;
             if (img != null) {
-                TcpServer.Instance.SendImage(m_tag_id, img.Id);
+                ConnectionManager.Instance.SendImageMetaData(m_tag_id, img.Id);
                 ScatterViewItem item = img.DraggedElement as ScatterViewItem;
                 item.Visibility = Visibility.Visible;
                 item.Orientation = e.Cursor.GetOrientation(this);

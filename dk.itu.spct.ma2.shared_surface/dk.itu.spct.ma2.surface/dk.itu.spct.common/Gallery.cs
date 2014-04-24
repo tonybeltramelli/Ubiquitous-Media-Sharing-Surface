@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace dk.itu.spct.common
@@ -10,12 +11,20 @@ namespace dk.itu.spct.common
     //Gallery representation
     public class Gallery
     {
-        private ObservableCollectionEx<ImageObject> images;
+        private ObservableCollectionEx<ImageObject> images; //Gallery images
+        private static Dictionary<int, string> colorchart;  //Colors assigned for clients tags
 
         //Get-Set
         public ObservableCollectionEx<ImageObject> Images {
             get {
                 return images;
+            }
+        }
+        public Dictionary<int, string>  Colorchart
+        {
+            get
+            {
+                return colorchart;
             }
         }
 
@@ -36,6 +45,15 @@ namespace dk.itu.spct.common
         //Setup gallery
         private void initialize() {
             images = new ObservableCollectionEx<ImageObject>(new List<ImageObject>());
+            colorchart = new Dictionary<int, string>();
+        }
+        //Assign random color to tag
+        public void AssignColor(int tag_id){
+            Random rand = new Random();
+            byte[] colorBytes = new byte[3];
+            rand.NextBytes(colorBytes);
+            System.Windows.Media.Color randomColor = System.Windows.Media.Color.FromRgb(colorBytes[0], colorBytes[1], colorBytes[2]);
+            colorchart.Add(tag_id, randomColor.ToString());
         }
         //Add image
         public void AddImage(ImageObject img) {
@@ -52,14 +70,28 @@ namespace dk.itu.spct.common
         //Remove owner from images
         public void removeDevice(int tag_id) {
             lock (images) {
+                List<ImageObject> toAdd = new List<ImageObject>();
+                List<ImageObject> toRemove = new List<ImageObject>();
                 foreach (ImageObject img in images) {
                     if (img.RemoveOwner(tag_id) > 0) {
-                        images.Remove(img);
+                        toRemove.Add(img);
                         if (img.Owners.Count != 0) {
-                            images.Add(img);
+                            toAdd.Add(img);
                         }
                     }
                 }
+
+                //Update observable collection
+                foreach (ImageObject img in toRemove)
+                {
+                    images.Remove(img);
+                }
+                foreach (ImageObject img in toAdd)
+                {
+                    images.Add(img);
+                }
+
+                colorchart.Remove(tag_id);
             }
         }
         //Destroy gallery
@@ -77,6 +109,7 @@ namespace dk.itu.spct.common
         private string m_file_name;
         private Bitmap m_bitmap;
         private HashSet<int> owners;
+        private HashSet<string> colors;
 
         //GET-SET
         public int Id {
@@ -104,6 +137,13 @@ namespace dk.itu.spct.common
                 return owners;
             }
         }
+        public HashSet<String> Colors
+        {
+            get
+            {
+                return colors;
+            }
+        }
         public object DraggedElement {
             get;
             set;
@@ -128,17 +168,26 @@ namespace dk.itu.spct.common
         //Setup image
         private void initialize() {
             owners = new HashSet<int>();
+            colors = new HashSet<string>();
             m_count++;
             m_id = m_count;
         }
         //Add device owner to current image
         public void AddOwner(int tag_id) {
+
+            string c = Gallery.Instance.Colorchart[tag_id];
+            colors.Add(c);
+
             lock (owners) {
                 owners.Add(tag_id);
             }
         }
         //Remove device owner from image
         public int RemoveOwner(int tag_id) {
+
+            string c = Gallery.Instance.Colorchart[tag_id];
+            colors.Remove(c);
+
             lock (owners) {
                 return owners.RemoveWhere(id => id == tag_id);
             }

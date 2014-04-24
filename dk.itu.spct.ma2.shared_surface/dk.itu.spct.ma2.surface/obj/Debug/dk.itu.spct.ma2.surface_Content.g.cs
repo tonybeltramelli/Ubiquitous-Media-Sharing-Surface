@@ -8,8 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("lib/net40/newtonsoft.json.dll")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("lib/net40/newtonsoft.json.pdb")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/icon.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("dk.itu.spct.ma2.surface.xml")]
 
