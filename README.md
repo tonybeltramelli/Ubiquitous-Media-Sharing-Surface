@@ -4,6 +4,8 @@ Ubiquitous-Media-Sharing-Surface
 Exchanging images between smartphones on a shared surface. Implemented for Android devices and a Microsoft PixelSense Surface.   
 Group project developed during the course Pervasive Computing, semester Spring 2014 at the IT University of Copenhagen.
 
+This branch (master) use SignalR for communication.
+
 ###Run the project
 * Create a local network
 * Compile and run the Microsoft Surface application
