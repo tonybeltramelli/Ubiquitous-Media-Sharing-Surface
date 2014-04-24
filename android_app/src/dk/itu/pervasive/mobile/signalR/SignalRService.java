@@ -6,30 +6,30 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.activity.MainActivity;
 import dk.itu.pervasive.mobile.data.DataManager;
 import dk.itu.pervasive.mobile.gallery2.ImageManager2;
-import dk.itu.pervasive.mobile.utils.UString;
-import dk.itu.pervasive.mobile.utils.dataStructure.URLInformation;
-import microsoft.aspnet.signalr.client.SignalRFuture;
+import dk.itu.pervasive.mobile.signalR.tasks.CreateConnectionTask;
+import dk.itu.pervasive.mobile.signalR.tasks.ReceiveImageTask;
+import dk.itu.pervasive.mobile.signalR.tasks.SendImageTask;
+import microsoft.aspnet.signalr.client.ErrorCallback;
 import microsoft.aspnet.signalr.client.hubs.HubConnection;
 import microsoft.aspnet.signalr.client.hubs.HubProxy;
-import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler;
 
+import java.io.File;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by centos on 4/23/14.
  */
 public class SignalRService extends Service implements SignalRCallbacks {
 
-    public static final String SIGNAL_R_SERVER_HUB = "MessageHub";
-    public static final String SIGNAL_R_INIT_COM_METHOD = "InitCommunication";
-    public static final String SIGNAL_R_MESSAGE_RECEIVED_HANDLER = "MessageReceived";
-
+    public static final String SIGNAL_R_SERVER_HUB = "Listener";
+    public static final String SIGNAL_R_INIT_COM_METHOD = "Register";
+    public static final String SIGNAL_R_SEND_IMAGE_METADATA_METHOD = "SendImageMetadata";
 
     private final int NOTIFICATION = R.string.tcp_service_started;
     private final IBinder _binder = new SignalRServiceBinder(this);
@@ -41,7 +41,6 @@ public class SignalRService extends Service implements SignalRCallbacks {
     //signalR objects
     HubConnection _hubConnection;
     HubProxy _hubProxy;
-    SignalRFuture<Void> _signalRFuture;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -60,33 +59,7 @@ public class SignalRService extends Service implements SignalRCallbacks {
     }
 
     private void createConnection() {
-        //TODO
-        URLInformation urlInformation = UString.getUrlInformation(DataManager.getInstance().getSurfaceAddress());
-        String host = urlInformation.getIp() + ":" + urlInformation.getPort();
-        _hubConnection = new HubConnection(host);
-        _hubProxy = _hubConnection.createHubProxy(SIGNAL_R_SERVER_HUB);
-
-        _signalRFuture = _hubConnection.start();
-        try {
-            _signalRFuture.get();
-            initCommunication();
-            setUpConnectionListeners();
-        } catch (InterruptedException e) {
-            onRequestFailure();
-        } catch (ExecutionException e) {
-            onRequestFailure();
-        }
-
-    }
-
-    private void setUpConnectionListeners() {
-        _hubProxy.on(SIGNAL_R_MESSAGE_RECEIVED_HANDLER , new SubscriptionHandler() {
-            @Override
-            public void run() {
-
-            }
-        });
-
+        new CreateConnectionTask(this).execute();
     }
 
     @Override
@@ -116,9 +89,19 @@ public class SignalRService extends Service implements SignalRCallbacks {
     }
 
     @Override
-    public void onRequestFailure() {
-        _hubConnection.stop();
+    public void onConnectionFailure() {
+        Log.i("SIGNAL", "Connection failed");
 
+        try {
+            if (_hubConnection != null){
+                _hubConnection.disconnect();
+                _hubConnection.stop();
+            }
+        } catch (Exception e) {
+
+        }
+        _hubConnection = null;
+        _hubProxy = null;
         _imageIndex = 0;
 
         MainActivity mainActivity = (MainActivity) DataManager.getInstance().getContext();
@@ -127,10 +110,85 @@ public class SignalRService extends Service implements SignalRCallbacks {
             if (mainActivity.isActivityRunning())
                 createConnection();
         }
-
     }
 
-    public void initCommunication() throws ExecutionException, InterruptedException {
-        _hubProxy.invoke(SIGNAL_R_INIT_COM_METHOD, DataManager.getInstance().getStickerID()).get();
+    @Override
+    public void onConnectionSucceded(HubConnection connection, HubProxy hubProxy) {
+        Log.i("SIGNAL", "Connection succeeded");
+        _hubConnection = connection;
+        _hubProxy = hubProxy;
+        setUpConnectionListeners();
+    }
+
+    @Override
+    public void onReceiveImage(String imagePath) {
+        Log.i("SIGNAL", "Image received with success : " + imagePath);
+        ImageManager2.getInstance().insertImageToGallery(imagePath);
+        _imagePaths = ImageManager2.getInstance().getImagePaths();
+    }
+
+    private void setUpConnectionListeners(){
+        _hubConnection.closed(new Runnable() {
+            @Override
+            public void run() {
+                onConnectionFailure();
+            }
+        });
+
+        _hubConnection.error(new ErrorCallback() {
+            @Override
+            public void onError(Throwable throwable) {
+                onConnectionFailure();
+            }
+        });
+
+        _hubProxy.subscribe(this);
+    }
+
+    //called from the server SignalR
+    public void RequestGallery(){
+        Log.i("SIGNAL" , "Request galley received");
+        _imageIndex = 0;
+        sendImageData();
+    }
+
+    //called from the server SignalR
+    public void SendSuccess(){
+        Log.i("SIGNAL" , "Success message received");
+        sendImageData();
+    }
+
+    //called from the server SignalR
+    public void SendImageMetadata(String fileName , int imageSize ){
+        Log.i("SIGNAL" , "Server is about to send an image : " + fileName + " size : " + imageSize);
+        new ReceiveImageTask(this , fileName).execute();
+    }
+
+    //called from the server SignalR
+    public void Disconnect(){
+        Log.i("SIGNAL", "Server send disconnect request");
+        _hubConnection.disconnect();
+    }
+
+    private void sendImageData(){
+
+        if( _imageIndex >= _imagePaths.size() ) {
+            Log.i("SIGNAL" , "All images sent. Returning");
+            return;
+        }
+
+        sendImageMetadataToServer(_imagePaths.get(_imageIndex));
+
+        Log.i("SIGNAL" , "Trying to sent image : " + _imagePaths.get(_imageIndex));
+        new SendImageTask(_imagePaths.get(_imageIndex)).execute();
+        _imageIndex++;
+    }
+
+    private void sendImageMetadataToServer(String filePath){
+        File imageFile = new File(filePath);
+
+        _hubProxy.invoke(SIGNAL_R_SEND_IMAGE_METADATA_METHOD ,
+                imageFile.getName() ,
+                imageFile.length());
     }
 }

@@ -5,21 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import dk.itu.pervasive.mobile.R;
 import dk.itu.pervasive.mobile.data.DataManager;
 import dk.itu.pervasive.mobile.preferences.CustomPreference;
-import dk.itu.pervasive.mobile.service.TCPService;
-import dk.itu.pervasive.mobile.service.TCPServiceConnection;
+import dk.itu.pervasive.mobile.signalR.SignalRService;
+import dk.itu.pervasive.mobile.signalR.SignalRServiceConnection;
 
 /**
  * @author Tony Beltramelli www.tonybeltramelli.com
  */
 public abstract class APrefActivity extends Activity
 {
-	private TCPServiceConnection _connection;
+	private SignalRServiceConnection _connection;
 	private boolean _isBound = false;
 	
 	@Override
@@ -33,9 +32,9 @@ public abstract class APrefActivity extends Activity
 	
 	protected void _bindService()
 	{
-		if (_connection == null) _connection = new TCPServiceConnection(this);
+		if (_connection == null) _connection = new SignalRServiceConnection(this);
 		
-		bindService(new Intent(this, TCPService.class), _connection, Context.BIND_AUTO_CREATE);
+		bindService(new Intent(this, SignalRService.class), _connection, Context.BIND_AUTO_CREATE);
 		
 		_isBound = true;
 	}
