@@ -124,7 +124,9 @@ public class SignalRService extends Service implements SignalRCallbacks {
     public void onReceiveImage(String imagePath) {
         Log.i("SIGNAL", "Image received with success : " + imagePath);
         ImageManager2.getInstance().insertImageToGallery(imagePath);
-        _imagePaths = ImageManager2.getInstance().getImagePaths();
+        //update the list with the new image
+        //so the next request will include the new image also
+        _imagePaths.add(imagePath);
     }
 
     private void setUpConnectionListeners(){
