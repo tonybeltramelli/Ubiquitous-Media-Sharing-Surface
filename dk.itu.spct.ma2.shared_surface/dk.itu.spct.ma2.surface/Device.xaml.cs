@@ -29,15 +29,18 @@ namespace TaggingLabClass
             m_tag_id = (int)this.VisualizedTag.Value;
             tag_id.Content = m_tag_id;
             Visibility = Visibility.Visible;
-            isDevicePresent = true;
 
-            string color_id = Gallery.Instance.Colorchart[m_tag_id];
-            var color = (Color)ColorConverter.ConvertFromString(color_id);
-            tag_id.Foreground = new SolidColorBrush(color);
-            pin_button.Background = new SolidColorBrush(color);
+            if (Gallery.Instance.Colorchart.ContainsKey(m_tag_id))
+            {
+                isDevicePresent = true;
+                string color_id = Gallery.Instance.Colorchart[m_tag_id];
+                var color = (Color)ColorConverter.ConvertFromString(color_id);
+                tag_id.Foreground = new SolidColorBrush(color);
+                pin_button.Background = new SolidColorBrush(color);
 
-            if (!isDevicePinned)
-                ConnectionManager.Instance.RequestGallery(m_tag_id);
+                if (!isDevicePinned)
+                    ConnectionManager.Instance.RequestGallery(m_tag_id);
+            }
         }
 
         void OnTagRemovedFromTheSurface(object s, RoutedEventArgs e) {
